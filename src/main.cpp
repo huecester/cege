@@ -1,5 +1,5 @@
-#include <iostream>
+#include "lib.hpp"
 
 int main() {
-	std::cout << "Hello, world!" << std::endl;
+	hello();
 }
