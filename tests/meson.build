@@ -1,11 +1,17 @@
+test_sources = [
+	'main.cpp',
+]
+
 test_dependencies = [
 	dependency('doctest'),
 ]
 
 test_exe = executable(
 	'cege_test',
-	'main.cpp',
-	dependencies: test_dependencies,
+	test_sources,
+	dependencies: libcege_dependencies + test_dependencies,
+	link_with: libcege,
+	include_directories: inccege,
 )
 
 test('unit tests', test_exe)
