@@ -1,6 +1,7 @@
 #include <SDL.h>
 
 #include "context.hpp"
+#include "texture.hpp"
 #include "window.hpp"
 
 constexpr auto WINDOW_TITLE = "Hello, SDL!";
@@ -14,10 +15,11 @@ int main() {
 	auto &ctx = Context::get_instance();
 	auto window = ctx.create_window(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS, RENDERER_FLAGS);
 
-	auto sdl_window = *window;
-	auto surface = SDL_GetWindowSurface(sdl_window);
-	SDL_FillRect(surface, nullptr, SDL_MapRGB(surface->format, 0xff, 0xff, 0xff));
-	SDL_UpdateWindowSurface(sdl_window);
+	auto rick = window.load_image("assets/rick_astley.png");
+	window.render_clear();
+	window.render_copy(rick);
+	window.render_present();
+
 	SDL_Event e;
 	bool quit = false;
 	while (quit == false) {

@@ -21,6 +21,8 @@ class Context {
 	/// @param rendererFlags 0 or multiple `SDL_RendererFlags` OR'd together.
 	auto create_window(const char *title, int x, int y, int w, int h, Uint32 windowFlags, Uint32 rendererFlags) -> Window;
 
+	~Context();
+
 	Context(const Context &) = delete;
 	Context(Context &&) = delete;
 	auto operator=(const Context &) -> void = delete;

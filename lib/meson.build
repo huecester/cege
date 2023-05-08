@@ -1,11 +1,13 @@
 libcege_sources = [
 	'context.cpp',
+	'texture.cpp',
 	'util.cpp',
 	'window.cpp',
 ]
 
 libcege_dependencies = [
 	dependency('sdl2'),
+	dependency('sdl2_image'),
 ]
 
 libcege = library(

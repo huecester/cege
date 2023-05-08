@@ -2,7 +2,10 @@
 
 #include <SDL.h>
 
+#include <filesystem>
 #include <memory>
+
+class Texture;
 
 /// @brief A window/renderer pair managed by SDL.
 class Window {
@@ -19,14 +22,29 @@ class Window {
 
 	~Window();
 
-	/// @brief Get the underlying SDL_Window *.
-	/// @return A pointer to the SDL_Window that this Window manages.
+	/// @brief Load an image into a texture.
+	/// @param path Path to the image.
+	/// @return A texture containing the image.
+	auto load_image(const std::filesystem::path &path) const -> Texture;
+
+	auto render_clear() const -> void {
+		SDL_RenderClear(renderer.get());
+	};
+
+	auto render_copy(const Texture &texture) const -> void;
+
+	auto render_present() const -> void {
+		SDL_RenderPresent(renderer.get());
+	}
+
+	/// @brief Get a pointer to the underlying `SDL_Window`.
+	/// @return A pointer to the `SDL_Window` that this `Window` manages.
 	auto operator*() const -> SDL_Window * {
 		return window.get();
 	};
 
-	/// @brief Get the underlying SDL_Window*.
-	/// @return A pointer to the SDL_Window that this Window manages.
+	/// @brief Get a pointer to the underlying `SDL_Window`.
+	/// @return A pointer to the `SDL_Window` that this `Window` manages.
 	auto operator->() const -> SDL_Window * {
 		return **this;
 	};
@@ -35,6 +53,6 @@ class Window {
 	std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
 	std::unique_ptr<SDL_Renderer, decltype(&SDL_DestroyRenderer)> renderer;
 
-	auto initialize_window(const char *title, int x, int y, int w, int h, Uint32 flags) -> SDL_Window *;
-	auto initialize_renderer(Uint32 flags) -> SDL_Renderer *;
+	static auto initialize_window(const char *title, int x, int y, int w, int h, Uint32 flags) -> SDL_Window *;
+	static auto initialize_renderer(SDL_Window *window, Uint32 flags) -> SDL_Renderer *;
 };

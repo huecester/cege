@@ -15,3 +15,8 @@ auto check_error(void *ptr, Error error = SDL_GetError) -> void;
 /// @param ret An SDL return code, where 0 is a success and negative values are errors.
 /// @param error The SDL error function to use (SDL_GetError by default).
 auto check_error(int ret, Error error = SDL_GetError) -> void;
+
+/// @brief Helper function to convert an SDL result into an SDL value or throw.
+/// @param condition A boolean, where false indicates a failure.
+/// @param error The SDL error function to use (SDL_GetError by default).
+auto check_error(bool condition, Error error = SDL_GetError) -> void;

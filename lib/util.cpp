@@ -13,3 +13,8 @@ auto check_error(int ret, Error error) -> void {
 	if (ret < 0)
 		throw std::runtime_error{error()};
 }
+
+auto check_error(bool condition, Error error) -> void {
+	if (!condition)
+		throw std::runtime_error{error()};
+}
