@@ -1,8 +1,8 @@
 #include <SDL.h>
 
 #include "context.hpp"
-#include "texture.hpp"
-#include "window.hpp"
+#include "sdl/texture.hpp"
+#include "sdl/window.hpp"
 
 constexpr auto WINDOW_TITLE = "Hello, SDL!";
 constexpr auto WINDOW_WIDTH = 640;

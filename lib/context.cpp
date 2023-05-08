@@ -2,8 +2,8 @@
 
 #include <SDL_image.h>
 
-#include "util.hpp"
-#include "window.hpp"
+#include "sdl/util.hpp"
+#include "sdl/window.hpp"
 
 constexpr auto IMG_FLAGS = IMG_INIT_PNG | IMG_INIT_JPG;
 

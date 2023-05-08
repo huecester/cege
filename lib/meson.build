@@ -1,8 +1,8 @@
 libcege_sources = [
 	'context.cpp',
-	'texture.cpp',
-	'util.cpp',
-	'window.cpp',
+	'sdl/texture.cpp',
+	'sdl/util.cpp',
+	'sdl/window.cpp',
 ]
 
 libcege_dependencies = [

@@ -4,7 +4,7 @@
 
 class Window;
 
-/// @brief Context for the application. An instance of this class must be used to interface with SDL properly.
+/// @brief Context for the application. This class should be used to interface with various SDL functions.
 class Context {
    public:
 	/// @brief Get the context for the application.
