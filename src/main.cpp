@@ -16,9 +16,6 @@ int main() {
 	auto window = ctx.create_window(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS, RENDERER_FLAGS);
 
 	auto rick = window.load_image("assets/rick_astley.png");
-	window.render_clear();
-	window.render_copy(rick);
-	window.render_present();
 
 	SDL_Event e;
 	bool quit = false;

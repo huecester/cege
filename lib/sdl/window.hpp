@@ -27,16 +27,6 @@ class Window {
 	/// @return A texture containing the image.
 	auto load_image(const std::filesystem::path &path) const -> Texture;
 
-	auto render_clear() const -> void {
-		SDL_RenderClear(renderer.get());
-	};
-
-	auto render_copy(const Texture &texture) const -> void;
-
-	auto render_present() const -> void {
-		SDL_RenderPresent(renderer.get());
-	}
-
 	/// @brief Get a pointer to the underlying `SDL_Window`.
 	/// @return A pointer to the `SDL_Window` that this `Window` manages.
 	auto operator*() const -> SDL_Window * {
