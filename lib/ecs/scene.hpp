@@ -60,8 +60,8 @@ class Scene {
 	auto remove_component(const Entity &entity) -> T;
 
    private:
-	std::unique_ptr<EntityManager> entity_manager;
-	std::unique_ptr<ComponentManager> component_manager;
+	std::unique_ptr<EntityManager> entity_manager{};
+	std::unique_ptr<ComponentManager> component_manager{};
 };
 
 #include "scene.ipp"
