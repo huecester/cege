@@ -13,26 +13,30 @@ class EntityManager {
 
 	/// @brief Reserve an entity ID.
 	/// @return An unused ID.
-	auto reserve_id() -> EntityID;
+	/// @throw std::length_error Throws if too many entities are created.
+	auto reserve_id() -> EntityId;
 
 	/// @brief Free an entity ID to be used again.
 	/// @param id The ID to be freed.
-	auto free_id(EntityID id) -> void;
+	/// @throw std::out_of_range Throws if an invalid entity ID is passed.
+	auto free_id(EntityId id) -> void;
 
    private:
 	Scene &scene;
-	std::queue<EntityID> available_ids;
+	std::queue<EntityId> available_ids;
 };
 
 /// @brief Helper class to manage an entity.
 class Entity {
    public:
-	Entity(Scene &scene, EntityID id) : scene{scene}, id{id} {};
+	Entity(Scene &scene, EntityId id) : scene{scene}, id{id} {};
 	~Entity();
 
-	auto get_id() -> EntityID { return id; }
+	/// @brief Get this entity's ID.
+	/// @return This entity's ID.
+	auto get_id() const -> EntityId { return id; }
 
    private:
 	Scene &scene;
-	EntityID id;
+	EntityId id;
 };

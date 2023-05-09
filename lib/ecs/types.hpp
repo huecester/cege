@@ -1,3 +1,3 @@
-#pragma once;
+#pragma once
 
-using EntityID = unsigned long long;
+using EntityId = unsigned long long;

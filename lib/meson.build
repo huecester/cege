@@ -1,10 +1,7 @@
 libcege_sources = [
 	'context.cpp',
-	'ecs/component.cpp',
-	'ecs/constants.hpp',
 	'ecs/entity.cpp',
 	'ecs/scene.cpp',
-	'ecs/types.hpp',
 	'sdl/texture.cpp',
 	'sdl/util.cpp',
 	'sdl/window.cpp',

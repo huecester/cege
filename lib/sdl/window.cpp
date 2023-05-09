@@ -17,10 +17,6 @@ auto Window::load_image(const std::filesystem::path &path) const -> Texture {
 	return Texture{path, renderer.get()};
 }
 
-auto Window::render_copy(const Texture &texture) const -> void {
-	SDL_RenderCopy(renderer.get(), *texture, nullptr, nullptr);
-}
-
 auto Window::initialize_window(const char *title, int x, int y, int w, int h, Uint32 flags) -> SDL_Window * {
 	check_error(SDL_InitSubSystem(SDL_INIT_VIDEO));
 

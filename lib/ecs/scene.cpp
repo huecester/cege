@@ -11,6 +11,6 @@ auto Scene::destroy_entity(Entity&& entity) -> void {
 	destroy_entity(entity.get_id());
 }
 
-auto Scene::destroy_entity(EntityID id) -> void {
+auto Scene::destroy_entity(EntityId id) -> void {
 	entity_manager->free_id(id);
 }

@@ -12,7 +12,7 @@ EntityManager::EntityManager(Scene& scene) : scene{scene} {
 		available_ids.push(i);
 }
 
-auto EntityManager::reserve_id() -> EntityID {
+auto EntityManager::reserve_id() -> EntityId {
 	if (available_ids.empty())
 		throw std::length_error{"Too many entities."};
 
@@ -21,7 +21,7 @@ auto EntityManager::reserve_id() -> EntityID {
 	return id;
 }
 
-auto EntityManager::free_id(EntityID id) -> void {
+auto EntityManager::free_id(EntityId id) -> void {
 	if (id >= MAX_ENTITIES)
 		throw std::out_of_range{fmt::format("Entity ID {} is out of range.", id)};
 	available_ids.push(id);
