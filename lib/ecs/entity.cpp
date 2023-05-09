@@ -7,7 +7,7 @@
 #include "constants.hpp"
 #include "scene.hpp"
 
-EntityManager::EntityManager(Scene& scene) : scene{scene} {
+EntityManager::EntityManager() {
 	for (auto i = 0; i < MAX_ENTITIES; i++)
 		available_ids.push(i);
 }

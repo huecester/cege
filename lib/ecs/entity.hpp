@@ -9,7 +9,7 @@ class Scene;
 /// @brief Manager for entity IDs.
 class EntityManager {
    public:
-	EntityManager(Scene &scene);
+	EntityManager();
 
 	/// @brief Reserve an entity ID.
 	/// @return An unused ID.
@@ -22,7 +22,6 @@ class EntityManager {
 	auto free_id(EntityId id) -> void;
 
    private:
-	Scene &scene;
 	std::queue<EntityId> available_ids;
 };
 

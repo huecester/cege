@@ -13,4 +13,5 @@ auto Scene::destroy_entity(Entity&& entity) -> void {
 
 auto Scene::destroy_entity(EntityId id) -> void {
 	entity_manager->free_id(id);
+	dispatch_event("EntityDestroyed", id);
 }

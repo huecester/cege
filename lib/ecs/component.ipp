@@ -2,6 +2,16 @@
 
 #include <utility>
 
+#include "scene.hpp"
+
+template <typename T>
+inline ComponentArray<T>::ComponentArray(Scene& scene) : scene{scene} {
+	scene.add_event_handler("EntityDestroyed", [this](EntityId id) mutable {
+		if (idToIndexMap.find(id) != idToIndexMap.end())
+			remove_component(id);
+	});
+}
+
 template <typename T>
 inline auto ComponentArray<T>::get_component(EntityId id) const -> T& {
 	if (idToIndexMap.find(id) == idToIndexMap.end())

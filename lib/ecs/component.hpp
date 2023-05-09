@@ -18,10 +18,11 @@ class GenericComponentArray {
 
 /// @brief A helper class for a packed array of components.
 /// @tparam T The component type.
-/// @todo Implement events to listen for entities being destroyed and free components that way.
 template <typename T>
 class ComponentArray : public GenericComponentArray {
    public:
+	ComponentArray(Scene& scene);
+
 	/// @brief Get an entity's component.
 	/// @param id The entity ID to get the component of.
 	/// @return A reference to the component.
@@ -51,6 +52,8 @@ class ComponentArray : public GenericComponentArray {
 	auto remove_component(EntityId target_id) -> T;
 
    private:
+	Scene& scene;
+
 	std::array<T, MAX_ENTITIES> components;
 	std::unordered_map<EntityId, size_t> idToIndexMap{};
 	std::unordered_map<size_t, EntityId> indexToIdMap{};
@@ -61,6 +64,8 @@ class ComponentArray : public GenericComponentArray {
 /// @brief Helper class to manage components and assign them to entities.
 class ComponentManager {
    public:
+	ComponentManager(Scene& scene) : scene{scene} {};
+
 	/// @brief Get an entity's component.
 	/// @tparam T The component type to get.
 	/// @param id The entity ID to get the component of.
@@ -105,6 +110,8 @@ class ComponentManager {
 	}
 
    private:
+	Scene& scene;
+
 	std::unordered_map<const char*, std::unique_ptr<GenericComponentArray>> component_arrays{};
 
 	/// @brief Get a component array.
@@ -113,7 +120,11 @@ class ComponentManager {
 	template <typename T>
 	auto get_component_array() -> ComponentArray<T>& {
 		auto type_name = typeid(T).name();
-		return *component_arrays[type_name];
+		auto component_array = component_arrays.find(type_name);
+		if (component_array == component_arrays.end()) {
+			component_array = component_arrays.emplace({type_name, std::make_unique<ComponentArray<T>>(scene)});
+		}
+		return *component_array;
 	}
 };
 
