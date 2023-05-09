@@ -4,5 +4,5 @@ CEGE (C++ ECS Game Engine) is a game engine written in C++, based on an Entity C
 
 ## TODO
 
-- [ ] Textures
-- [ ] Window renderer
+- [x] Textures
+- [x] Window renderer
