@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 
+#include "types.hpp"
+
 /// @brief An interface for a generic event.
 class GenericEvent {
    public:
@@ -17,13 +19,11 @@ class GenericEvent {
 template <typename... Args>
 class Event : public GenericEvent {
    public:
-	using Handler = std::function<void(Args &&...)>;
-
 	Event(const char *event_name) : event_name{event_name} {};
 
 	/// @brief Add a handler to this event/argument pair.
 	/// @param handler The handler to add.
-	auto add_handler(Handler &&handler) -> void;
+	auto add_handler(Handler<Args...> handler) -> void;
 
 	/// @brief Call all attached event handlers with arguments.
 	/// @param ...args The arguments to pass to the event handlers.
@@ -31,7 +31,7 @@ class Event : public GenericEvent {
 
    private:
 	const char *event_name;
-	std::vector<Handler> handlers;
+	std::vector<Handler<Args...>> handlers;
 };
 
 /// @brief A helper class for managing events and handlers.
@@ -42,7 +42,7 @@ class EventManager {
 	/// @param event_name The event to listen for.
 	/// @param handler The handler to be called when the event is dispatched.
 	template <typename... Args>
-	auto add_handler(const char *event_name, typename Event<Args...>::Handler &&handler) -> void;
+	auto add_handler(const char *event_name, Handler<Args...> handler) -> void;
 
 	/// @brief Dispatch an event.
 	/// @tparam ...Args Argument types for the event handlers.

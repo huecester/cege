@@ -1,5 +1,7 @@
 test_sources = [
-	'main.cpp',
+	'main.test.cpp',
+	'context.test.cpp',
+	'scene.test.cpp',
 ]
 
 test_dependencies = [

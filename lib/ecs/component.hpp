@@ -27,7 +27,7 @@ class ComponentArray : public GenericComponentArray {
 	/// @param id The entity ID to get the component of.
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
-	auto get_component(EntityId id) const -> T&;
+	auto get_component(EntityId id) -> T&;
 
 	/// @brief Create a component in place.
 	/// @tparam ...Args Argument types for the component constructor.
@@ -72,7 +72,7 @@ class ComponentManager {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component(EntityId id) const -> T& {
+	auto get_component(EntityId id) -> T& {
 		return get_component_array<T>().get_component(id);
 	}
 
@@ -96,7 +96,7 @@ class ComponentManager {
 	/// @throw std::runtime_error Throws if the entity already has a component of this type.
 	template <typename T>
 	auto set_component(EntityId id, T&& component) -> T& {
-		return get_component_array<T>().set_component(id, component);
+		return get_component_array<T>().set_component(id, std::move(component));
 	}
 
 	/// @brief Remove an entity's component.
@@ -120,11 +120,12 @@ class ComponentManager {
 	template <typename T>
 	auto get_component_array() -> ComponentArray<T>& {
 		auto type_name = typeid(T).name();
-		auto component_array = component_arrays.find(type_name);
-		if (component_array == component_arrays.end()) {
-			component_array = component_arrays.emplace({type_name, std::make_unique<ComponentArray<T>>(scene)});
+		auto search = component_arrays.find(type_name);
+		if (search == component_arrays.end()) {
+			component_arrays.insert({type_name, std::make_unique<ComponentArray<T>>(scene)});
+			search = component_arrays.find(type_name);
 		}
-		return *component_array;
+		return static_cast<ComponentArray<T>&>(*(search->second));
 	}
 };
 

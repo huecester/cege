@@ -1,7 +1,7 @@
 #pragma once
 
 template <typename... Args>
-inline auto Event<Args...>::add_handler(typename Event<Args...>::Handler &&handler) -> void {
+inline auto Event<Args...>::add_handler(Handler<Args...> handler) -> void {
 	handlers.push_back(handler);
 }
 
@@ -13,11 +13,13 @@ inline auto Event<Args...>::dispatch(Args &&...args) const -> void {
 }
 
 template <typename... Args>
-inline auto EventManager::add_handler(const char *event_name, typename Event<Args...>::Handler &&handler) -> void {
+inline auto EventManager::add_handler(const char *event_name, Handler<Args...> handler) -> void {
 	auto key = fmt::format("{}{}", event_name, typeid(Args).name()...);
 	auto search = events.find(key);
-	if (search == events.end())
-		search = events.emplace({key, {event_name}});
+	if (search == events.end()) {
+		events.insert({key, Event<Args...>{event_name}});
+		search = events.find(key);
+	}
 
 	auto [_, event] = *search;
 	static_cast<Event<Args...> &>(event).add_handler(handler);

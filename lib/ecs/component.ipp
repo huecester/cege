@@ -3,20 +3,25 @@
 #include <utility>
 
 #include "scene.hpp"
+#include "types.hpp"
 
 template <typename T>
 inline ComponentArray<T>::ComponentArray(Scene& scene) : scene{scene} {
-	scene.add_event_handler("EntityDestroyed", [this](EntityId id) mutable {
+	Handler<EntityId> handler = [this](EntityId id) mutable {
 		if (idToIndexMap.find(id) != idToIndexMap.end())
 			remove_component(id);
-	});
+	};
+
+	scene.add_event_handler<EntityId>("EntityDestroyed", handler);
 }
 
 template <typename T>
-inline auto ComponentArray<T>::get_component(EntityId id) const -> T& {
-	if (idToIndexMap.find(id) == idToIndexMap.end())
+inline auto ComponentArray<T>::get_component(EntityId id) -> T& {
+	auto index_search = idToIndexMap.find(id);
+	if (index_search == idToIndexMap.end())
 		throw std::runtime_error{fmt::format("Entity {} does not have a(n) `{}` component.", id, typeid(T).name())};
-	return components[idToIndexMap[id]];
+	auto [_, index] = *index_search;
+	return components[index];
 }
 
 template <typename T>

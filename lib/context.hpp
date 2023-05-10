@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 
+class Scene;
 class Window;
 
 /// @brief Context for the application. This class should be used to interface with various SDL functions.
@@ -20,6 +21,10 @@ class Context {
 	/// @param windowFlags 0 or multiple `SDL_WindowFlags` OR'd together.
 	/// @param rendererFlags 0 or multiple `SDL_RendererFlags` OR'd together.
 	auto create_window(const char *title, int x, int y, int w, int h, Uint32 windowFlags, Uint32 rendererFlags) -> Window;
+
+	/// @brief Create a new scene with a managed ECS.
+	/// @return A new scene.
+	auto create_scene() -> Scene;
 
 	~Context();
 

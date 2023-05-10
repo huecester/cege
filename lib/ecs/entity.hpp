@@ -35,7 +35,40 @@ class Entity {
 	/// @return This entity's ID.
 	auto get_id() const -> EntityId { return id; }
 
+	/// @brief Get a component.
+	/// @tparam T The component type to get.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	template <typename T>
+	auto get_component() -> T &;
+
+	/// @brief Create a component in place.
+	/// @tparam T The component type to create.
+	/// @tparam ...Args Argument types for the component constructor.
+	/// @param ...args The arguments to forward to the component constructor.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity already has a component of this type.
+	template <typename T, typename... Args>
+	auto create_component(Args &&...args) -> T &;
+
+	/// @brief Set a component.
+	/// @tparam T The component type to set.
+	/// @param component The component to assign.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity already has a component of this type.
+	template <typename T>
+	auto set_component(T &&component) -> T &;
+
+	/// @brief Remove a component.
+	/// @tparam T The component type to remove.
+	/// @return The component.
+	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	template <typename T>
+	auto remove_component() -> T;
+
    private:
 	Scene &scene;
 	EntityId id;
 };
+
+#include "entity.ipp"
