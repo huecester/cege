@@ -10,7 +10,7 @@ struct TestVector {
 	int x, y;
 };
 
-TEST_CASE("scenes can be created") {
+TEST_CASE("scenes work") {
 	auto &ctx = Context::get_instance();
 	auto scene = ctx.create_scene();
 

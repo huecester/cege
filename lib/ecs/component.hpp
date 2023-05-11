@@ -1,7 +1,5 @@
 #pragma once
 
-#include <fmt/core.h>
-
 #include <array>
 #include <stdexcept>
 #include <string>
@@ -15,6 +13,7 @@
 class GenericComponentArray {
    public:
 	virtual ~GenericComponentArray() = default;
+	virtual auto entity_destroyed(EntityId id) -> void = 0;
 };
 
 /// @brief A helper class for a packed array of components.
@@ -22,8 +21,6 @@ class GenericComponentArray {
 template <typename T>
 class ComponentArray : public GenericComponentArray {
    public:
-	ComponentArray(Scene& scene);
-
 	/// @brief Get an entity's component.
 	/// @param id The entity ID to get the component of.
 	/// @return A reference to the component.
@@ -52,12 +49,15 @@ class ComponentArray : public GenericComponentArray {
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	auto remove_component(EntityId target_id) -> T;
 
-   private:
-	Scene& scene;
+	auto entity_destroyed(EntityId id) -> void override {
+		if (id_to_index_map.find(id) != id_to_index_map.end())
+			remove_component(id);
+	}
 
-	std::array<T, MAX_ENTITIES> components;
-	std::unordered_map<EntityId, size_t> idToIndexMap{};
-	std::unordered_map<size_t, EntityId> indexToIdMap{};
+   private:
+	std::array<T, MAX_ENTITIES> components{};
+	std::unordered_map<EntityId, size_t> id_to_index_map{};
+	std::unordered_map<size_t, EntityId> index_to_id_map{};
 
 	size_t len = 0;
 };
@@ -65,8 +65,6 @@ class ComponentArray : public GenericComponentArray {
 /// @brief Helper class to manage components and assign them to entities.
 class ComponentManager {
    public:
-	ComponentManager(Scene& scene) : scene{scene} {};
-
 	/// @brief Get an entity's component.
 	/// @tparam T The component type to get.
 	/// @param id The entity ID to get the component of.
@@ -110,9 +108,9 @@ class ComponentManager {
 		return get_component_array<T>().remove_component(id);
 	}
 
-   private:
-	Scene& scene;
+	auto entity_destroyed(EntityId id) -> void;
 
+   private:
 	std::unordered_map<std::string, std::unique_ptr<GenericComponentArray>> component_arrays{};
 
 	/// @brief Get a component array.
@@ -123,7 +121,7 @@ class ComponentManager {
 		auto type_name = typeid(T).name();
 		auto search = component_arrays.find(type_name);
 		if (search == component_arrays.end()) {
-			component_arrays.insert({type_name, std::make_unique<ComponentArray<T>>(scene)});
+			component_arrays.insert({type_name, std::make_unique<ComponentArray<T>>()});
 			search = component_arrays.find(type_name);
 		}
 		return static_cast<ComponentArray<T>&>(*(search->second));

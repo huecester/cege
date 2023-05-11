@@ -1,22 +1,14 @@
 #pragma once
 
-#include "scene.hpp"
+#include <fmt/core.h>
+
+#include "component.hpp"
 #include "types.hpp"
 
 template <typename T>
-inline ComponentArray<T>::ComponentArray(Scene& scene) : scene{scene} {
-	Handler<EntityId> handler = [=](EntityId id) mutable {
-		if (idToIndexMap.find(id) != idToIndexMap.end())
-			remove_component(id);
-	};
-
-	scene.add_event_handler<EntityId>("EntityDestroyed", handler);
-}
-
-template <typename T>
 inline auto ComponentArray<T>::get_component(EntityId id) -> T& {
-	auto index_search = idToIndexMap.find(id);
-	if (index_search == idToIndexMap.end())
+	auto index_search = id_to_index_map.find(id);
+	if (index_search == id_to_index_map.end())
 		throw std::runtime_error{fmt::format("Entity {} does not have a(n) `{}` component.", id, typeid(T).name())};
 	auto [_, index] = *index_search;
 	return components[index];
@@ -30,12 +22,12 @@ inline auto ComponentArray<T>::create_component(EntityId id, Args&&... args) -> 
 
 template <typename T>
 inline auto ComponentArray<T>::set_component(EntityId id, T&& component) -> T& {
-	if (idToIndexMap.find(id) != idToIndexMap.end())
+	if (id_to_index_map.find(id) != id_to_index_map.end())
 		throw std::runtime_error{fmt::format("Cannot add component `{}` to entity {} more than once.", typeid(T).name(), id)};
 
 	auto new_index = len++;
-	idToIndexMap[id] = new_index;
-	indexToIdMap[new_index] = id;
+	id_to_index_map[id] = new_index;
+	index_to_id_map[new_index] = id;
 	components[new_index] = component;
 
 	return components[new_index];
@@ -43,20 +35,20 @@ inline auto ComponentArray<T>::set_component(EntityId id, T&& component) -> T& {
 
 template <typename T>
 inline auto ComponentArray<T>::remove_component(EntityId target_id) -> T {
-	if (idToIndexMap.find(target_id) == idToIndexMap.end())
+	if (id_to_index_map.find(target_id) == id_to_index_map.end())
 		throw std::runtime_error{fmt::format("Entity {} does not have a(n) `{}` component.", target_id, typeid(T).name())};
 
-	auto target_index = idToIndexMap[target_id];
+	auto target_index = id_to_index_map[target_id];
 	auto last_index = --len;
 	auto target_component = components[target_index];
 	components[target_index] = components[last_index];
 
-	auto last_id = indexToIdMap[last_index];
-	idToIndexMap[last_id] = target_index;
-	indexToIdMap[target_index] = last_id;
+	auto last_id = index_to_id_map[last_index];
+	id_to_index_map[last_id] = target_index;
+	index_to_id_map[target_index] = last_id;
 
-	idToIndexMap.erase(target_id);
-	indexToIdMap.erase(last_index);
+	id_to_index_map.erase(target_id);
+	index_to_id_map.erase(last_index);
 
 	return target_component;
 }
