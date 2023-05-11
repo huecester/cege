@@ -1,7 +1,9 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -19,7 +21,7 @@ class GenericEvent {
 template <typename... Args>
 class Event : public GenericEvent {
    public:
-	Event(const char *event_name) : event_name{event_name} {};
+	Event(std::string_view event_name) : event_name{event_name} {};
 
 	/// @brief Add a handler to this event/argument pair.
 	/// @param handler The handler to add.
@@ -30,8 +32,8 @@ class Event : public GenericEvent {
 	auto dispatch(Args &&...args) const -> void;
 
    private:
-	const char *event_name;
-	std::vector<Handler<Args...>> handlers;
+	std::string_view event_name;
+	std::vector<Handler<Args...>> handlers{};
 };
 
 /// @brief A helper class for managing events and handlers.
@@ -42,14 +44,14 @@ class EventManager {
 	/// @param event_name The event to listen for.
 	/// @param handler The handler to be called when the event is dispatched.
 	template <typename... Args>
-	auto add_handler(const char *event_name, Handler<Args...> handler) -> void;
+	auto add_handler(std::string_view event_name, Handler<Args...> handler) -> void;
 
 	/// @brief Dispatch an event.
 	/// @tparam ...Args Argument types for the event handlers.
 	/// @param event_name The event to dispatch.
 	/// @param ...args The arguments to pass to the event handlers.
 	template <typename... Args>
-	auto dispatch(const char *event_name, Args &&...args) const -> void;
+	auto dispatch(std::string_view event_name, Args &&...args) const -> void;
 
    private:
 	std::unordered_map<std::string, GenericEvent> events{};

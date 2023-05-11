@@ -1,13 +1,11 @@
 #pragma once
 
-#include <utility>
-
 #include "scene.hpp"
 #include "types.hpp"
 
 template <typename T>
 inline ComponentArray<T>::ComponentArray(Scene& scene) : scene{scene} {
-	Handler<EntityId> handler = [this](EntityId id) mutable {
+	Handler<EntityId> handler = [=](EntityId id) mutable {
 		if (idToIndexMap.find(id) != idToIndexMap.end())
 			remove_component(id);
 	};

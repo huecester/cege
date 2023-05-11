@@ -22,7 +22,7 @@ class EntityManager {
 	auto free_id(EntityId id) -> void;
 
    private:
-	std::queue<EntityId> available_ids;
+	std::queue<EntityId> available_ids{};
 };
 
 /// @brief Helper class to manage an entity.

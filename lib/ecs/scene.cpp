@@ -1,10 +1,16 @@
 #include "scene.hpp"
 
+#include "component.hpp"
 #include "entity.hpp"
+#include "event.hpp"
+
+Scene::Scene()
+	: event_manager{std::make_unique<EventManager>()},
+	  entity_manager{std::make_unique<EntityManager>()},
+	  component_manager{std::make_unique<ComponentManager>(*this)} {}
 
 auto Scene::create_entity() -> Entity {
-	auto id = entity_manager->reserve_id();
-	return Entity{*this, id};
+	return Entity{*this, entity_manager->reserve_id()};
 }
 
 auto Scene::destroy_entity(Entity&& entity) -> void {

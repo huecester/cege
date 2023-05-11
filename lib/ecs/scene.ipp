@@ -1,7 +1,5 @@
 #pragma once
 
-#include <utility>
-
 #include "component.hpp"
 #include "entity.hpp"
 #include "event.hpp"
@@ -47,11 +45,11 @@ inline auto Scene::remove_component(EntityId id) -> T {
 }
 
 template <typename... Args>
-inline auto Scene::add_event_handler(const char *event_name, Handler<Args...> handler) -> void {
+inline auto Scene::add_event_handler(std::string_view event_name, Handler<Args...> handler) -> void {
 	event_manager->add_handler(event_name, handler);
 }
 
 template <typename... Args>
-inline auto Scene::dispatch_event(const char *event_name, Args &&...args) const -> void {
+inline auto Scene::dispatch_event(std::string_view event_name, Args &&...args) const -> void {
 	event_manager->dispatch(event_name, std::forward<Args>(args)...);
 }

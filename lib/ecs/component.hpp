@@ -4,6 +4,7 @@
 
 #include <array>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <utility>
 
@@ -112,7 +113,7 @@ class ComponentManager {
    private:
 	Scene& scene;
 
-	std::unordered_map<const char*, std::unique_ptr<GenericComponentArray>> component_arrays{};
+	std::unordered_map<std::string, std::unique_ptr<GenericComponentArray>> component_arrays{};
 
 	/// @brief Get a component array.
 	/// @tparam T The type of component array to get.

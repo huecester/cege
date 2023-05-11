@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string_view>
 
 #include "types.hpp"
 
@@ -12,6 +13,8 @@ class EventManager;
 /// @brief A container that manages a single ECS.
 class Scene {
    public:
+	Scene();
+
 	/// @brief Create an entity.
 	/// @return The entity.
 	/// @throw std::length_error Throws if too many entities are created.
@@ -100,19 +103,19 @@ class Scene {
 	/// @param event_name The event to listen for.
 	/// @param handler The handler to be called when the event is dispatched.
 	template <typename... Args>
-	auto add_event_handler(const char *event_name, Handler<Args...> handler) -> void;
+	auto add_event_handler(std::string_view event_name, Handler<Args...> handler) -> void;
 
 	/// @brief Dispatch an event.
 	/// @tparam ...Args Argument types for the event handlers.
 	/// @param event_name The event to dispatch.
 	/// @param ...args The arguments to pass to the event handlers.
 	template <typename... Args>
-	auto dispatch_event(const char *event_name, Args &&...args) const -> void;
+	auto dispatch_event(std::string_view event_name, Args &&...args) const -> void;
 
    private:
-	std::unique_ptr<ComponentManager> component_manager{};
-	std::unique_ptr<EntityManager> entity_manager{};
-	std::unique_ptr<EventManager> event_manager{};
+	std::unique_ptr<EventManager> event_manager;
+	std::unique_ptr<EntityManager> entity_manager;
+	std::unique_ptr<ComponentManager> component_manager;
 };
 
 #include "scene.ipp"

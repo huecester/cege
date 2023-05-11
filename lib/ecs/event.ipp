@@ -13,7 +13,7 @@ inline auto Event<Args...>::dispatch(Args &&...args) const -> void {
 }
 
 template <typename... Args>
-inline auto EventManager::add_handler(const char *event_name, Handler<Args...> handler) -> void {
+inline auto EventManager::add_handler(std::string_view event_name, Handler<Args...> handler) -> void {
 	auto key = fmt::format("{}{}", event_name, typeid(Args).name()...);
 	auto search = events.find(key);
 	if (search == events.end()) {
@@ -26,7 +26,7 @@ inline auto EventManager::add_handler(const char *event_name, Handler<Args...> h
 }
 
 template <typename... Args>
-inline auto EventManager::dispatch(const char *event_name, Args &&...args) const -> void {
+inline auto EventManager::dispatch(std::string_view event_name, Args &&...args) const -> void {
 	auto key = fmt::format("{}{}", event_name, typeid(Args).name()...);
 	auto search = events.find(key);
 	if (search == events.end()) return;
