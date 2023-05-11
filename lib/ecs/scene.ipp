@@ -2,7 +2,6 @@
 
 #include "component.hpp"
 #include "entity.hpp"
-#include "event.hpp"
 
 template <typename T>
 inline auto Scene::get_component(const Entity &entity) -> T & {
@@ -42,14 +41,4 @@ inline auto Scene::remove_component(const Entity &entity) -> T {
 template <typename T>
 inline auto Scene::remove_component(EntityId id) -> T {
 	return component_manager->remove_component<T>(id);
-}
-
-template <typename... Args>
-inline auto Scene::add_event_handler(std::string_view event_name, Handler<Args...> handler) -> void {
-	event_manager->add_handler(event_name, handler);
-}
-
-template <typename... Args>
-inline auto Scene::dispatch_event(std::string_view event_name, Args &&...args) const -> void {
-	event_manager->dispatch(event_name, std::forward<Args>(args)...);
 }

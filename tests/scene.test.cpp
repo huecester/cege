@@ -10,7 +10,7 @@ struct TestVector {
 	int x, y;
 };
 
-TEST_CASE("scenes can be created") {
+TEST_CASE("scenes work") {
 	auto &ctx = Context::get_instance();
 	auto scene = ctx.create_scene();
 
@@ -22,6 +22,27 @@ TEST_CASE("scenes can be created") {
 
 			CHECK(component.x == 2);
 			CHECK(component.y == 5);
+
+			SUBCASE("components can be got") {
+				auto &get_component = entity.get_component<TestVector>();
+
+				CHECK(get_component.x == 2);
+				CHECK(get_component.y == 5);
+			}
+
+			SUBCASE("components can be modified") {
+				component.x++;
+
+				CHECK(component.x == 3);
+
+				auto &get_component = entity.get_component<TestVector>();
+
+				CHECK(get_component.x == 3);
+				get_component.x++;
+
+				CHECK(get_component.x == 4);
+				CHECK(component.x == 4);
+			}
 		}
 
 		SUBCASE("components can be set") {
@@ -30,29 +51,6 @@ TEST_CASE("scenes can be created") {
 
 			CHECK(component.x == 2);
 			CHECK(component.y == 5);
-		}
-
-		SUBCASE("components can be got") {
-			entity.create_component<TestVector>(2, 5);
-			auto &component = entity.get_component<TestVector>();
-
-			CHECK(component.x == 2);
-			CHECK(component.y == 5);
-		}
-
-		SUBCASE("components can be modified") {
-			auto &component1 = entity.create_component<TestVector>(2, 5);
-			component1.x++;
-
-			CHECK(component1.x == 3);
-
-			auto &component2 = entity.get_component<TestVector>();
-
-			CHECK(component2.x == 3);
-			component2.x++;
-
-			CHECK(component2.x == 4);
-			CHECK(component1.x == 4);
 		}
 
 		SUBCASE("components can be removed") {
