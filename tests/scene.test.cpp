@@ -5,10 +5,7 @@
 #include <utility>
 
 #include "context.hpp"
-
-struct TestVector {
-	int x, y;
-};
+#include "test_types.hpp"
 
 TEST_CASE("scenes work") {
 	auto &ctx = Context::get_instance();

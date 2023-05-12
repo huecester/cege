@@ -11,9 +11,11 @@ constexpr auto WINDOW_HEIGHT = 480;
 constexpr auto WINDOW_FLAGS = SDL_WINDOW_SHOWN;
 constexpr auto RENDERER_FLAGS = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 
+constexpr WindowOptions WINDOW_OPTIONS{WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS, RENDERER_FLAGS};
+
 int main() {
-	auto &ctx = Context::get_instance();
-	auto window = ctx.create_window(WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_FLAGS, RENDERER_FLAGS);
+	Context ctx{WINDOW_OPTIONS};
+	auto &window = ctx.get_window();
 
 	auto rick = window.load_image("assets/rick_astley.png");
 

@@ -3,15 +3,14 @@
 #include <SDL_image.h>
 #include <doctest.h>
 
-TEST_CASE("only one context is created") {
-	auto &instance1 = Context::get_instance();
-	auto &instance2 = Context::get_instance();
+#include "test_types.hpp"
 
-	CHECK(&instance1 == &instance2);
-}
+TEST_CASE("context works") {
+	auto ctx = Context{TEST_WINDOW_OPTIONS};
 
-TEST_CASE("context initializes SDL_image") {
-	Context::get_instance();
+	REQUIRE(IMG_Init(0) > 0);
 
-	CHECK(IMG_Init(0) > 0);
+	SUBCASE("context initializes window") {
+		auto &window = ctx.get_window();
+	}
 }
