@@ -12,7 +12,7 @@
 constexpr auto IMG_FLAGS = IMG_INIT_PNG | IMG_INIT_JPG;
 
 Context::Context(const WindowOptions& window_options) : window{window_options} {
-	check_error(static_cast<bool>(!((IMG_Init(IMG_FLAGS) & IMG_FLAGS) ^ IMG_FLAGS)), IMG_GetError);
+	check_error((IMG_Init(IMG_FLAGS) & IMG_FLAGS) == IMG_FLAGS, IMG_GetError);
 }
 
 Context::~Context() {
