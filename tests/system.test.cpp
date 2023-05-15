@@ -9,6 +9,14 @@
 #include "ecs/scene.hpp"
 #include "test_types.hpp"
 
+struct Foo {
+	int x = 1;
+};
+
+struct Bar {
+	int x = 2;
+};
+
 class FooSystem : public System {
    public:
 	auto sum() -> int {
@@ -35,14 +43,6 @@ class BarSystem : public System {
 
 		return sum;
 	}
-};
-
-struct Foo {
-	int x = 1;
-};
-
-struct Bar {
-	int x = 2;
 };
 
 TEST_CASE("systems work") {
