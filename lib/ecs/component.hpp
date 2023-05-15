@@ -1,5 +1,7 @@
 #pragma once
 
+#include <fmt/core.h>
+
 #include <array>
 #include <stdexcept>
 #include <string>
@@ -108,24 +110,33 @@ class ComponentManager {
 		return get_component_array<T>().remove_component(id);
 	}
 
+	/// @brief Get a component's ID.
+	/// @tparam T The component to get the ID of.
+	/// @return The component's ID.
+	/// @throw std::runtime_error Throws if the component has not already been used.
+	template <typename T>
+	auto get_component_id() const -> ComponentId {
+		auto type_name = typeid(T).name();
+
+		auto search = component_ids.find(type_name);
+		if (search == component_ids.end())
+			throw std::runtime_error{fmt::format("Cannot find ID of component `{}` before use.", type_name)};
+
+		return search->second;
+	}
+
 	auto entity_destroyed(EntityId id) -> void;
 
    private:
 	std::unordered_map<std::string, std::unique_ptr<GenericComponentArray>> component_arrays{};
+	std::unordered_map<std::string, ComponentId> component_ids{};
+	ComponentId next_component_id = 0;
 
-	/// @brief Get a component array.
-	/// @tparam T The type of component array to get.
-	/// @return A reference to the component array.
 	template <typename T>
-	auto get_component_array() -> ComponentArray<T>& {
-		auto type_name = typeid(T).name();
-		auto search = component_arrays.find(type_name);
-		if (search == component_arrays.end()) {
-			component_arrays.insert({type_name, std::make_unique<ComponentArray<T>>()});
-			search = component_arrays.find(type_name);
-		}
-		return static_cast<ComponentArray<T>&>(*(search->second));
-	}
+	auto get_component_array() -> ComponentArray<T>&;
+
+	template <typename T>
+	auto register_component_array() -> void;
 };
 
 #include "component.ipp"

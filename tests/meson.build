@@ -1,7 +1,8 @@
 test_sources = [
 	'main.test.cpp',
 	'context.test.cpp',
-	'scene.test.cpp',
+	'component.test.cpp',
+	'system.test.cpp',
 ]
 
 test_dependencies = [

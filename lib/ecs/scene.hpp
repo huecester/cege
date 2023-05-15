@@ -8,6 +8,7 @@
 class ComponentManager;
 class Entity;
 class EntityManager;
+class SystemManager;
 
 /// @brief A container that manages a single ECS.
 class Scene {
@@ -21,11 +22,7 @@ class Scene {
 
 	/// @brief Destroy an entity.
 	/// @param entity The entity to be destroyed.
-	auto destroy_entity(Entity &&entity) -> void;
-
-	/// @brief Destroy an entity.
-	/// @param id The ID of the entity to be destroyed.
-	auto destroy_entity(EntityId id) -> void;
+	auto destroy_entity(Entity &entity) -> void;
 
 	/// @brief Get an entity's component.
 	/// @tparam T The component type to get.
@@ -35,14 +32,6 @@ class Scene {
 	template <typename T>
 	auto get_component(const Entity &entity) -> T &;
 
-	/// @brief Get an entity's component.
-	/// @tparam T The component type to get.
-	/// @param id The entity ID to get the component of.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
-	template <typename T>
-	auto get_component(EntityId id) -> T &;
-
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
 	/// @tparam ...Args Argument types for the component constructor.
@@ -51,17 +40,7 @@ class Scene {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity already has a component of this type.
 	template <typename T, typename... Args>
-	auto create_component(const Entity &entity, Args &&...args) -> T &;
-
-	/// @brief Create a component in place.
-	/// @tparam T The component type to create.
-	/// @tparam ...Args Argument types for the component constructor.
-	/// @param id The entity ID to assign this component to.
-	/// @param ...args The arguments to forward to the component constructor.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity already has a component of this type.
-	template <typename T, typename... Args>
-	auto create_component(EntityId id, Args &&...args) -> T &;
+	auto create_component(Entity &entity, Args &&...args) -> T &;
 
 	/// @brief Set an entity's component.
 	/// @tparam T The component type to set.
@@ -70,16 +49,7 @@ class Scene {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity already has a component of this type.
 	template <typename T>
-	auto set_component(const Entity &entity, T &&component) -> T &;
-
-	/// @brief Set an entity's component.
-	/// @tparam T The component type to set.
-	/// @param id The entity ID to assign this component to.
-	/// @param component The component to assign.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity already has a component of this type.
-	template <typename T>
-	auto set_component(EntityId id, T &&component) -> T &;
+	auto set_component(Entity &entity, T &&component) -> T &;
 
 	/// @brief Remove an entity's component.
 	/// @tparam T The component type to remove.
@@ -87,19 +57,43 @@ class Scene {
 	/// @return The component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto remove_component(const Entity &entity) -> T;
+	auto remove_component(Entity &entity) -> T;
 
-	/// @brief Remove an entity's component.
-	/// @tparam T The component type to remove.
-	/// @param id The entity ID to remove the component from.
-	/// @return The component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @brief Create a system.
+	/// @tparam T The system to create.
+	/// @return A reference to the system instance.
+	/// @throw Throws if the system has already been created.
 	template <typename T>
-	auto remove_component(EntityId id) -> T;
+	auto create_system() -> T &;
+
+	/// @brief Create a signature from a component type.
+	/// @tparam T The component type to create a signature of.
+	/// @return The signature.
+	template <typename T>
+	auto create_signature() const -> Signature;
+
+	/// @brief Create a signature from a list of component types.
+	///
+	/// @internal
+	/// @tparam T1 The first component type.
+	/// @tparam T2 The second component type.
+	/// @tparam ...TN The rest of the component types.
+	/// @endinternal
+	///
+	/// @return The signature
+	template <typename T1, typename T2, typename... TN>
+	auto create_signature() const -> Signature;
+
+	/// @brief Set a system's signature.
+	/// @tparam T The system to set the signature of.
+	/// @param signature The signature to set.
+	template <typename T>
+	auto set_system_signature(Signature signature) -> void;
 
    private:
 	std::unique_ptr<EntityManager> entity_manager;
 	std::unique_ptr<ComponentManager> component_manager;
+	std::unique_ptr<SystemManager> system_manager;
 };
 
 #include "scene.ipp"

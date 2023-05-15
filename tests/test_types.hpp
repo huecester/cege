@@ -4,10 +4,6 @@
 
 #include "sdl/types.hpp"
 
-struct TestVector {
-	int x, y;
-};
-
 constexpr WindowOptions TEST_WINDOW_OPTIONS{
 	.title = "Hello, SDL!",
 	.x = SDL_WINDOWPOS_CENTERED,

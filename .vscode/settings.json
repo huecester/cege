@@ -2,6 +2,7 @@
   "C_Cpp.default.compileCommands": "builddir/vscode_compile_commands.json",
   "files.associations": {
     ".env": "ini",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "set": "cpp"
   }
 }

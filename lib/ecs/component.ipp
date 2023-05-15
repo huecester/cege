@@ -52,3 +52,23 @@ inline auto ComponentArray<T>::remove_component(EntityId target_id) -> T {
 
 	return target_component;
 }
+
+template <typename T>
+inline auto ComponentManager::get_component_array() -> ComponentArray<T>& {
+	auto type_name = typeid(T).name();
+	auto search = component_arrays.find(type_name);
+	if (search == component_arrays.end()) {
+		register_component_array<T>();
+		search = component_arrays.find(type_name);
+	}
+	return static_cast<ComponentArray<T>&>(*(search->second));
+}
+
+template <typename T>
+inline auto ComponentManager::register_component_array() -> void {
+	auto type_name = typeid(T).name();
+	if (component_arrays.find(type_name) != component_arrays.end())
+		throw std::runtime_error{fmt::format("Component `{}` cannot be registered twice.", type_name)};
+	component_arrays.insert({type_name, std::make_unique<ComponentArray<T>>()});
+	component_ids.insert({type_name, next_component_id++});
+}

@@ -2,6 +2,7 @@
 
 #include <fmt/core.h>
 
+#include <ranges>
 #include <stdexcept>
 
 #include "constants.hpp"
@@ -28,5 +29,5 @@ auto EntityManager::free_id(EntityId id) -> void {
 }
 
 Entity::~Entity() {
-	scene.destroy_entity(id);
+	scene.destroy_entity(*this);
 }

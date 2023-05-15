@@ -2,8 +2,10 @@
 
 #include <SDL.h>
 
+#include "sdl/types.hpp"
+#include "sdl/window.hpp"
+
 class Scene;
-class Window;
 
 /// @brief Context for the application.
 ///

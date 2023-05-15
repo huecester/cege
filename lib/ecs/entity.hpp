@@ -66,9 +66,13 @@ class Entity {
 	template <typename T>
 	auto remove_component() -> T;
 
+	auto get_signature() const -> Signature { return signature; };
+	auto set_signature(Signature signature) -> void { this->signature = signature; };
+
    private:
 	Scene &scene;
 	EntityId id;
+	Signature signature;
 };
 
 #include "entity.ipp"
