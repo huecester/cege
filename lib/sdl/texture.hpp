@@ -15,15 +15,11 @@ class Texture {
 
 	/// @brief Get a pointer to the underlying `SDL_Texture`.
 	/// @return A pointer to the `SDL_Texture` that this `Texture` manages.
-	auto operator*() const -> SDL_Texture * {
-		return texture.get();
-	};
+	auto operator*() const -> SDL_Texture *;
 
 	/// @brief Get a pointer to the underlying `SDL_Texture`.
 	/// @return A pointer to the `SDL_Texture` that this `Texture` manages.
-	auto operator->() const -> SDL_Texture * {
-		return **this;
-	};
+	auto operator->() const -> SDL_Texture *;
 
    private:
 	std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture;

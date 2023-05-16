@@ -2,6 +2,8 @@
 
 #include <fmt/core.h>
 
+#include <utility>
+
 #include "component.hpp"
 #include "types.hpp"
 
@@ -51,6 +53,32 @@ inline auto ComponentArray<T>::remove_component(EntityId target_id) -> T {
 	index_to_id_map.erase(last_index);
 
 	return target_component;
+}
+
+template <typename T>
+inline auto ComponentArray<T>::entity_destroyed(EntityId id) -> void {
+	if (id_to_index_map.find(id) != id_to_index_map.end())
+		remove_component(id);
+}
+
+template <typename T>
+inline auto ComponentManager::get_component(EntityId id) -> T& {
+	return get_component_array<T>().get_component(id);
+}
+
+template <typename T, typename... Args>
+inline auto ComponentManager::create_component(EntityId id, Args&&... args) -> T& {
+	return get_component_array<T>().create_component(id, std::forward<Args>(args)...);
+}
+
+template <typename T>
+inline auto ComponentManager::set_component(EntityId id, T&& component) -> T& {
+	return get_component_array<T>().set_component(id, std::move(component));
+}
+
+template <typename T>
+inline auto ComponentManager::remove_component(EntityId id) -> T {
+	return get_component_array<T>().remove_component(id);
 }
 
 template <typename T>

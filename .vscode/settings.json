@@ -4,6 +4,20 @@
     ".env": "ini",
     "*.ipp": "cpp",
     "set": "cpp",
-    "unordered_map": "cpp"
+    "unordered_map": "cpp",
+    "__bit_reference": "cpp",
+    "__hash_table": "cpp",
+    "__split_buffer": "cpp",
+    "__tree": "cpp",
+    "array": "cpp",
+    "deque": "cpp",
+    "initializer_list": "cpp",
+    "map": "cpp",
+    "span": "cpp",
+    "string": "cpp",
+    "string_view": "cpp",
+    "unordered_set": "cpp",
+    "vector": "cpp",
+    "filesystem": "cpp"
   }
 }

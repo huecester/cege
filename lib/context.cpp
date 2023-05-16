@@ -19,6 +19,8 @@ Context::~Context() {
 	IMG_Quit();
 }
 
+auto Context::get_window() -> Window& { return window; }
+
 auto Context::create_scene() -> Scene {
 	return Scene{};
 }

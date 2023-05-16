@@ -63,13 +63,13 @@ TEST_CASE("systems work") {
 	std::vector<Entity> foo_entities{};
 	std::vector<Entity> bar_entities{};
 
-	for (auto i : std::ranges::views::iota(0, N_FOO_ENTITIES)) {
+	for ([[maybe_unused]] auto i : std::ranges::views::iota(0, N_FOO_ENTITIES)) {
 		auto entity = scene.create_entity();
 		entity.create_component<Foo>();
 		foo_entities.push_back(std::move(entity));
 	}
 
-	for (auto i : std::ranges::views::iota(0, N_BAR_ENTITIES)) {
+	for ([[maybe_unused]] auto i : std::ranges::views::iota(0, N_BAR_ENTITIES)) {
 		auto entity = scene.create_entity();
 		entity.create_component<Bar>();
 		bar_entities.push_back(std::move(entity));

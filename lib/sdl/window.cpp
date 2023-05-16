@@ -13,6 +13,14 @@ Window::~Window() {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
+auto Window::operator*() const -> SDL_Window * {
+	return window.get();
+}
+
+auto Window::operator->() const -> SDL_Window * {
+	return **this;
+}
+
 auto Window::load_image(const std::filesystem::path &path) const -> Texture {
 	return Texture{path, renderer.get()};
 }

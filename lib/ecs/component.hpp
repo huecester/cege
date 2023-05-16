@@ -3,10 +3,8 @@
 #include <fmt/core.h>
 
 #include <array>
-#include <stdexcept>
 #include <string>
 #include <unordered_map>
-#include <utility>
 
 #include "constants.hpp"
 #include "types.hpp"
@@ -51,10 +49,7 @@ class ComponentArray : public GenericComponentArray {
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	auto remove_component(EntityId target_id) -> T;
 
-	auto entity_destroyed(EntityId id) -> void override {
-		if (id_to_index_map.find(id) != id_to_index_map.end())
-			remove_component(id);
-	}
+	auto entity_destroyed(EntityId id) -> void override;
 
    private:
 	std::array<T, MAX_ENTITIES> components{};
@@ -73,9 +68,7 @@ class ComponentManager {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component(EntityId id) -> T& {
-		return get_component_array<T>().get_component(id);
-	}
+	auto get_component(EntityId id) -> T&;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
@@ -85,9 +78,7 @@ class ComponentManager {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity already has a component of this type.
 	template <typename T, typename... Args>
-	auto create_component(EntityId id, Args&&... args) -> T& {
-		return get_component_array<T>().create_component(id, std::forward<Args>(args)...);
-	}
+	auto create_component(EntityId id, Args&&... args) -> T&;
 
 	/// @brief Set an entity's component.
 	/// @tparam T The component type to set.
@@ -96,9 +87,7 @@ class ComponentManager {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity already has a component of this type.
 	template <typename T>
-	auto set_component(EntityId id, T&& component) -> T& {
-		return get_component_array<T>().set_component(id, std::move(component));
-	}
+	auto set_component(EntityId id, T&& component) -> T&;
 
 	/// @brief Remove an entity's component.
 	/// @tparam T The component type to remove.
@@ -106,9 +95,7 @@ class ComponentManager {
 	/// @return The component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto remove_component(EntityId id) -> T {
-		return get_component_array<T>().remove_component(id);
-	}
+	auto remove_component(EntityId id) -> T;
 
 	/// @brief Get a component's ID.
 	/// @tparam T The component to get the ID of.

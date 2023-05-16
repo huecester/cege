@@ -21,7 +21,7 @@ class Context {
 
 	/// @brief Get the current window.
 	/// @return The current window.
-	auto get_window() -> Window & { return window; };
+	auto get_window() -> Window &;
 
 	/// @brief Create a new scene with a managed ECS.
 	/// @return A new scene.

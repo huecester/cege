@@ -8,6 +8,14 @@
 #include "constants.hpp"
 #include "scene.hpp"
 
+Entity::Entity(Scene &scene, EntityId id) : scene{scene}, id{id} {}
+
+Entity::~Entity() {
+	scene.destroy_entity(*this);
+}
+
+auto Entity::get_id() const -> EntityId { return id; }
+
 EntityManager::EntityManager() {
 	for (auto i : std::ranges::views::iota(0, MAX_ENTITIES))
 		available_ids.push(i);
@@ -28,6 +36,5 @@ auto EntityManager::free_id(EntityId id) -> void {
 	available_ids.push(id);
 }
 
-Entity::~Entity() {
-	scene.destroy_entity(*this);
-}
+auto Entity::get_signature() const -> Signature { return signature; }
+auto Entity::set_signature(Signature signature) -> void { this->signature = signature; }

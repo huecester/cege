@@ -28,12 +28,12 @@ class EntityManager {
 /// @brief Helper class to manage an entity.
 class Entity {
    public:
-	Entity(Scene &scene, EntityId id) : scene{scene}, id{id} {};
+	Entity(Scene &scene, EntityId id);
 	~Entity();
 
 	/// @brief Get this entity's ID.
 	/// @return This entity's ID.
-	auto get_id() const -> EntityId { return id; }
+	auto get_id() const -> EntityId;
 
 	/// @brief Get a component.
 	/// @tparam T The component type to get.
@@ -66,8 +66,8 @@ class Entity {
 	template <typename T>
 	auto remove_component() -> T;
 
-	auto get_signature() const -> Signature { return signature; };
-	auto set_signature(Signature signature) -> void { this->signature = signature; };
+	auto get_signature() const -> Signature;
+	auto set_signature(Signature signature) -> void;
 
    private:
 	Scene &scene;

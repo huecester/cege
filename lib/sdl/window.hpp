@@ -20,15 +20,11 @@ class Window {
 
 	/// @brief Get a pointer to the underlying `SDL_Window`.
 	/// @return A pointer to the `SDL_Window` that this `Window` manages.
-	auto operator*() const -> SDL_Window * {
-		return window.get();
-	};
+	auto operator*() const -> SDL_Window *;
 
 	/// @brief Get a pointer to the underlying `SDL_Window`.
 	/// @return A pointer to the `SDL_Window` that this `Window` manages.
-	auto operator->() const -> SDL_Window * {
-		return **this;
-	};
+	auto operator->() const -> SDL_Window *;
 
 	/// @brief Load an image into a texture.
 	/// @param path Path to the image.
