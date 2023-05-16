@@ -16,18 +16,18 @@ auto System::get_entities(Scene& scene) const -> std::vector<Entity> {
 	return entities;
 }
 
-auto SystemManager::entity_destroyed(EntityId entity) -> void {
+auto SystemManager::entity_destroyed(EntityId id) -> void {
 	for (auto& [_, system] : systems)
-		system.ids.erase(entity);
+		system.ids.erase(id);
 }
 
-auto SystemManager::entity_signature_changed(EntityId entity, Signature signature) -> void {
+auto SystemManager::entity_signature_changed(EntityId id, Signature signature) -> void {
 	for (auto& [type, system] : systems) {
 		auto system_signature = signatures[type];
 
 		if ((signature & system_signature) == system_signature)
-			system.ids.insert(entity);
+			system.ids.insert(id);
 		else
-			system.ids.erase(entity);
+			system.ids.erase(id);
 	}
 }

@@ -9,7 +9,7 @@
 #include "constants.hpp"
 #include "types.hpp"
 
-/// @brief An interface to allow for an array of component arrays.
+/// @brief An interface to allow storing a collection of component arrays.
 class GenericComponentArray {
    public:
 	virtual ~GenericComponentArray() = default;
@@ -23,8 +23,7 @@ class ComponentArray : public GenericComponentArray {
    public:
 	/// @brief Get an entity's component.
 	/// @param id The entity ID to get the component of.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return A reference to the component, or std::nullopt if the entity doesn't have this component.
 	auto get_component(EntityId id) -> std::optional<std::reference_wrapper<T>>;
 
 	/// @brief Create a component in place.
@@ -44,11 +43,16 @@ class ComponentArray : public GenericComponentArray {
 	auto set_component(EntityId id, T&& component) -> T&;
 
 	/// @brief Remove an entity's component.
-	/// @param id The entity ID to remove the component from.
-	/// @return The component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @param target_id The entity ID to remove the component from.
+	/// @return The component, or std::nullopt if the entity doesn't have this component.
 	auto remove_component(EntityId target_id) -> std::optional<T>;
 
+	/// @internal
+	/// @brief Remove an entity's component.
+	///
+	/// This method should be called by `ComponentManager` when an entity is destroyed.
+	///
+	/// @param id The entity ID that was destroyed.
 	auto entity_destroyed(EntityId id) -> void override;
 
    private:
@@ -65,8 +69,7 @@ class ComponentManager {
 	/// @brief Get an entity's component.
 	/// @tparam T The component type to get.
 	/// @param id The entity ID to get the component of.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return A reference to the component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto get_component(EntityId id) -> std::optional<std::reference_wrapper<T>>;
 
@@ -92,18 +95,22 @@ class ComponentManager {
 	/// @brief Remove an entity's component.
 	/// @tparam T The component type to remove.
 	/// @param id The entity ID to remove the component from.
-	/// @return The component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return The component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto remove_component(EntityId id) -> std::optional<T>;
 
 	/// @brief Get a component's ID.
-	/// @tparam T The component to get the ID of.
+	/// @tparam T The component type to get the ID of.
 	/// @return The component's ID.
-	/// @throw std::runtime_error Throws if the component has not already been used.
 	template <typename T>
 	auto get_component_id() -> ComponentId;
 
+	/// @internal
+	/// @brief Remove all of an entity's components.
+	///
+	/// This method should be called by `Scene` when an entity is destroyed.
+	///
+	/// @param id The entity ID that was destroyed.
 	auto entity_destroyed(EntityId id) -> void;
 
    private:
@@ -111,9 +118,16 @@ class ComponentManager {
 	std::unordered_map<std::string, ComponentId> component_ids{};
 	ComponentId next_component_id = 0;
 
+	/// @internal
+	/// @brief Get a component array.
+	/// @tparam T The component type to get the array of.
+	/// @return A reference to the component array.
 	template <typename T>
 	auto get_component_array() -> ComponentArray<T>&;
 
+	/// @brief Register a new component array.
+	/// @tparam T The component type to register.
+	/// @throw std::length_error Throws if too many components have already been registered.
 	template <typename T>
 	auto register_component_array() -> void;
 };

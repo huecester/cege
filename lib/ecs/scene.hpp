@@ -37,8 +37,7 @@ class Scene {
 	/// @brief Get an entity's component.
 	/// @tparam T The component type to get.
 	/// @param entity The entity to get the component of.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return A reference to the component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T>>;
 
@@ -64,15 +63,14 @@ class Scene {
 	/// @brief Remove an entity's component.
 	/// @tparam T The component type to remove.
 	/// @param entity The entity to remove the component from.
-	/// @return The component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return The component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto remove_component(Entity &entity) -> std::optional<T>;
 
 	/// @brief Create a system.
 	/// @tparam T The system to create.
 	/// @return A reference to the system instance.
-	/// @throw Throws if the system has already been created.
+	/// @throw std::runtime_error Throws if the system has already been created.
 	template <typename T>
 	auto create_system() -> T &;
 

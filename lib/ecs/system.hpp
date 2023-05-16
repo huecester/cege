@@ -36,7 +36,7 @@ class SystemManager {
 	/// @brief Create a system.
 	/// @tparam T The system to create.
 	/// @return A reference to the system instance.
-	/// @throw Throws if the system has already been created.
+	/// @throw std::runtime_error Throws if the system has already been created.
 	template <typename T>
 	auto create_system() -> T &;
 
@@ -46,8 +46,23 @@ class SystemManager {
 	template <typename T>
 	auto set_signature(Signature signature) -> void;
 
-	auto entity_destroyed(EntityId entity) -> void;
-	auto entity_signature_changed(EntityId entity, Signature signature) -> void;
+	/// @internal
+	/// @brief Remove an entity from all systems.
+	///
+	/// This method should be called by `Scene` when an entity is destroyed.
+	///
+	/// @param id The entity that was destroyed.
+	auto entity_destroyed(EntityId id) -> void;
+
+	/// @internal
+	/// @brief Update all systems based on an entity's new signature.
+	///
+	/// This method should be called by `Scene` whenever an entity's signature changes.
+	/// An entity's signature changes whenever its components update, such as when calling `create_component()` or `remove_component()`.
+	///
+	/// @param id The entity ID that changed.
+	/// @param signature The new signature.
+	auto entity_signature_changed(EntityId id, Signature signature) -> void;
 
    private:
 	std::unordered_map<std::string, Signature> signatures{};

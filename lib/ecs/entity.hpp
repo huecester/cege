@@ -18,8 +18,7 @@ class Entity {
 
 	/// @brief Get a component.
 	/// @tparam T The component type to get.
-	/// @return A reference to the component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return A reference to the component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto get_component() -> std::optional<std::reference_wrapper<T>>;
 
@@ -42,8 +41,7 @@ class Entity {
 
 	/// @brief Remove a component.
 	/// @tparam T The component type to remove.
-	/// @return The component.
-	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
+	/// @return The component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto remove_component() -> std::optional<T>;
 
@@ -52,7 +50,17 @@ class Entity {
 	/// Frees all resources associated to this entity, including IDs and any associated components.
 	auto destroy() -> void;
 
+	/// @internal
+	/// @brief Get this entity's signature.
+	///
+	/// This signature represents all components that this entity owns.
+	///
+	/// @return The signature.
 	auto get_signature() const -> Signature;
+
+	/// @internal
+	/// @brief Set this entity's signature.
+	/// @param signature The signature to set.
 	auto set_signature(Signature signature) -> void;
 
    private:
