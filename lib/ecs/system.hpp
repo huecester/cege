@@ -22,13 +22,10 @@ class System {
    public:
 	std::set<EntityId> ids;
 
-	System(Scene *scene);
 	virtual ~System() = default;
 
    protected:
-	Scene *scene;
-
-	auto get_entities() -> std::vector<Entity>;
+	auto get_entities(Scene &scene) const -> std::vector<Entity>;
 };
 
 /// @brief A class to store and manage systems.
@@ -36,8 +33,6 @@ class System {
 /// Systems that have inherited from `System` can be instantiated here using `create_system`.
 class SystemManager {
    public:
-	SystemManager(Scene *scene);
-
 	/// @brief Create a system.
 	/// @tparam T The system to create.
 	/// @return A reference to the system instance.
@@ -55,7 +50,6 @@ class SystemManager {
 	auto entity_signature_changed(EntityId entity, Signature signature) -> void;
 
    private:
-	Scene *scene;
 	std::unordered_map<std::string, Signature> signatures{};
 	std::unordered_map<std::string, System> systems{};
 };

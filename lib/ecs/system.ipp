@@ -9,7 +9,7 @@ inline auto SystemManager::create_system() -> T& {
 	if (systems.find(type_name) != systems.end())
 		throw std::runtime_error{fmt::format("System `{}` cannot be created more than once.", type_name)};
 
-	systems.insert({type_name, T{scene}});
+	systems.insert({type_name, T{}});
 	auto search = systems.find(type_name);
 	return static_cast<T&>(search->second);
 }

@@ -10,7 +10,7 @@
 Scene::Scene()
 	: entity_manager{std::make_unique<EntityManager>()},
 	  component_manager{std::make_unique<ComponentManager>()},
-	  system_manager{std::make_unique<SystemManager>(this)} {}
+	  system_manager{std::make_unique<SystemManager>()} {}
 
 auto Scene::create_entity() -> Entity {
 	return Entity{this, entity_manager->reserve_id()};

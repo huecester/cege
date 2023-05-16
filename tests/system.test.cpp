@@ -21,12 +21,10 @@ struct Bar {
 
 class FooSystem : public System {
    public:
-	FooSystem(Scene *scene) : System{scene} {}
-
-	auto sum() -> int {
+	auto sum(Scene &scene) -> int {
 		auto sum = 0;
 
-		for (auto entity : get_entities()) {
+		for (auto entity : get_entities(scene)) {
 			auto &foo = entity.get_component<Foo>()->get();
 			sum += foo.x;
 		}
@@ -37,12 +35,10 @@ class FooSystem : public System {
 
 class BarSystem : public System {
    public:
-	BarSystem(Scene *scene) : System{scene} {}
-
-	auto sum() -> int {
+	auto sum(Scene &scene) -> int {
 		auto sum = 0;
 
-		for (auto entity : get_entities()) {
+		for (auto entity : get_entities(scene)) {
 			auto &bar = entity.get_component<Bar>()->get();
 			sum += bar.x;
 		}
@@ -88,8 +84,8 @@ TEST_CASE("systems work") {
 		entity.create_component<Bar>();
 	}
 
-	CHECK(foo_system.sum() == 3);
-	CHECK(bar_system.sum() == 4);
+	CHECK(foo_system.sum(scene) == 3);
+	CHECK(bar_system.sum(scene) == 4);
 
 	CHECK(foo_system.ids.size() == N_FOO_ENTITIES);
 	CHECK(bar_system.ids.size() == N_BAR_ENTITIES);
