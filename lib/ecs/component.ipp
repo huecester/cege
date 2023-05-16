@@ -30,7 +30,7 @@ inline auto ComponentArray<T>::set_component(EntityId id, T&& component) -> T& {
 	auto new_index = len++;
 	id_to_index_map[id] = new_index;
 	index_to_id_map[new_index] = id;
-	components[new_index] = component;
+	components[new_index] = std::move(component);
 
 	return components[new_index];
 }
@@ -42,8 +42,8 @@ inline auto ComponentArray<T>::remove_component(EntityId target_id) -> std::opti
 
 	auto target_index = id_to_index_map[target_id];
 	auto last_index = --len;
-	auto target_component = components[target_index];
-	components[target_index] = components[last_index];
+	auto target_component = std::move(components[target_index]);
+	components[target_index] = std::move(components[last_index]);
 
 	auto last_id = index_to_id_map[last_index];
 	id_to_index_map[last_id] = target_index;

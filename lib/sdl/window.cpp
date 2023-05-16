@@ -21,8 +21,28 @@ auto Window::operator->() const -> SDL_Window * {
 	return **this;
 }
 
+auto Window::get_renderer() const -> SDL_Renderer * {
+	return renderer.get();
+}
+
 auto Window::load_image(const std::filesystem::path &path) const -> Texture {
 	return Texture{path, renderer.get()};
+}
+
+auto Window::set_clear_color(Uint8 r, Uint8 g, Uint8 b, Uint8 a) -> void {
+	SDL_SetRenderDrawColor(get_renderer(), r, g, b, a);
+}
+
+auto Window::clear() -> void {
+	SDL_RenderClear(get_renderer());
+}
+
+auto Window::render(Texture &texture, const SDL_Rect *srcrect, const SDL_Rect *dstrect, double angle, const SDL_Point *center, SDL_RendererFlip flip) -> void {
+	SDL_RenderCopyEx(get_renderer(), *texture, srcrect, dstrect, angle, center, flip);
+}
+
+auto Window::present() -> void {
+	SDL_RenderPresent(get_renderer());
 }
 
 auto Window::initialize_window(const WindowOptions &window_options) -> SDL_Window * {

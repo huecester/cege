@@ -5,15 +5,27 @@
 
 #include "util.hpp"
 
-Texture::Texture(const std::filesystem::path& path, SDL_Renderer* renderer)
-	: texture{initialize_texture(path, renderer), SDL_DestroyTexture} {}
+Texture::Texture() : texture{nullptr, SDL_DestroyTexture}, width{0}, height{0} {}
 
-auto Texture::operator*() const -> SDL_Texture * {
+Texture::Texture(const std::filesystem::path& path, SDL_Renderer* renderer)
+	: texture{initialize_texture(path, renderer), SDL_DestroyTexture} {
+	SDL_QueryTexture(**this, nullptr, nullptr, &width, &height);
+}
+
+auto Texture::operator*() const -> SDL_Texture* {
 	return texture.get();
 }
 
-auto Texture::operator->() const -> SDL_Texture * {
+auto Texture::operator->() const -> SDL_Texture* {
 	return **this;
+}
+
+auto Texture::get_width() const -> int {
+	return width;
+}
+
+auto Texture::get_height() const -> int {
+	return height;
 }
 
 auto Texture::initialize_texture(const std::filesystem::path& path, SDL_Renderer* renderer) -> SDL_Texture* {
