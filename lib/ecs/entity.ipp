@@ -5,20 +5,20 @@
 
 template <typename T>
 inline auto Entity::get_component() -> std::optional<std::reference_wrapper<T>> {
-	return scene.get_component<T>(*this);
+	return scene->get_component<T>(*this);
 }
 
 template <typename T, typename... Args>
 inline auto Entity::create_component(Args &&...args) -> T & {
-	return scene.create_component<T>(*this, std::forward<Args>(args)...);
+	return scene->create_component<T>(*this, std::forward<Args>(args)...);
 }
 
 template <typename T>
 inline auto Entity::set_component(T &&component) -> T & {
-	return scene.set_component<T>(*this, std::move(component));
+	return scene->set_component<T>(*this, std::move(component));
 }
 
 template <typename T>
 inline auto Entity::remove_component() -> std::optional<T> {
-	return scene.remove_component<T>(*this);
+	return scene->remove_component<T>(*this);
 }

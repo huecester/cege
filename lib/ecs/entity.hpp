@@ -1,6 +1,5 @@
 #pragma once
 
-#include <functional>
 #include <optional>
 #include <queue>
 
@@ -11,8 +10,7 @@ class Scene;
 /// @brief Helper class to manage an entity.
 class Entity {
    public:
-	Entity(Scene &scene, EntityId id);
-	~Entity();
+	Entity(Scene *scene, EntityId id);
 
 	/// @brief Get this entity's ID.
 	/// @return This entity's ID.
@@ -49,11 +47,16 @@ class Entity {
 	template <typename T>
 	auto remove_component() -> std::optional<T>;
 
+	/// @brief Destroy this entity.
+	///
+	/// Frees all resources associated to this entity, including IDs and any associated components.
+	auto destroy() -> void;
+
 	auto get_signature() const -> Signature;
 	auto set_signature(Signature signature) -> void;
 
    private:
-	Scene &scene;
+	Scene *scene;
 	EntityId id;
 	Signature signature;
 };

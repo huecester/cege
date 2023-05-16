@@ -22,6 +22,14 @@ class Scene {
 	/// @throw std::length_error Throws if too many entities are created.
 	auto create_entity() -> Entity;
 
+	/// @brief Create an entity from an ID.
+	///
+	/// This override is mainly used to create an entity from an ID that references an already existing entity without having to pass around references or pointers.
+	///
+	/// @return The entity.
+	/// @throw std::length_error Throws if too many entities are created.
+	auto create_entity(EntityId id) -> Entity;
+
 	/// @brief Destroy an entity.
 	/// @param entity The entity to be destroyed.
 	auto destroy_entity(Entity &entity) -> void;

@@ -5,16 +5,12 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "(lldb) Unit tests",
-			"type": "cppdbg",
+			"name": "Unit tests",
+			"type": "lldb",
 			"request": "launch",
 			"program": "${workspaceRoot}/builddir/tests/cege_test",
 			"args": [],
-			"stopAtEntry": false,
-			"cwd": "${fileDirname}",
-			"environment": [],
-			"externalConsole": false,
-			"MIMode": "lldb"
+			"cwd": "${fileDirname}"
 		}
 	]
 }

@@ -8,7 +8,7 @@
 #include "types.hpp"
 
 template <typename T>
-inline auto Scene::get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T >> {
+inline auto Scene::get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T>> {
 	return component_manager->get_component<T>(entity.get_id());
 }
 
@@ -20,7 +20,7 @@ inline auto Scene::create_component(Entity &entity, Args &&...args) -> T & {
 	signature.set(component_manager->get_component_id<T>());
 	entity.set_signature(signature);
 
-	system_manager->entity_signature_changed(std::ref(entity), signature);
+	system_manager->entity_signature_changed(entity.get_id(), signature);
 
 	return component_ref;
 }
@@ -33,7 +33,7 @@ inline auto Scene::set_component(Entity &entity, T &&component) -> T & {
 	signature.set(component_manager->get_component_id<T>());
 	entity.set_signature(signature);
 
-	system_manager->entity_signature_changed(std::ref(entity), signature);
+	system_manager->entity_signature_changed(entity.get_id(), signature);
 
 	return component_ref;
 }
@@ -46,7 +46,7 @@ inline auto Scene::remove_component(Entity &entity) -> std::optional<T> {
 	signature.reset(component_manager->get_component_id<T>());
 	entity.set_signature(signature);
 
-	system_manager->entity_signature_changed(std::ref(entity), signature);
+	system_manager->entity_signature_changed(entity.get_id(), signature);
 
 	return component;
 }

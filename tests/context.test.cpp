@@ -11,6 +11,6 @@ TEST_CASE("context works") {
 	REQUIRE(IMG_Init(0) > 0);
 
 	SUBCASE("context initializes window") {
-		auto &window = ctx.get_window();
+		[[maybe_unused]] auto &window = ctx.get_window();
 	}
 }

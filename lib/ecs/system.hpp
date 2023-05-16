@@ -11,9 +11,7 @@
 #include "types.hpp"
 
 class Entity;
-
-/// @brief Comparator for a set of `std::reference_wrapper<Entity>`'s.
-auto entity_cmp(std::reference_wrapper<Entity> lhs, std::reference_wrapper<Entity> rhs) -> bool;
+class Scene;
 
 /// @brief A class to store references to entities that a system cares about.
 ///
@@ -22,9 +20,15 @@ auto entity_cmp(std::reference_wrapper<Entity> lhs, std::reference_wrapper<Entit
 /// Signatures store information on the components that an entity should have to be stored in this system.
 class System {
    public:
-	std::set<std::reference_wrapper<Entity>, decltype(&entity_cmp)> entities;
+	std::set<EntityId> ids;
 
+	System(Scene *scene);
 	virtual ~System() = default;
+
+   protected:
+	Scene *scene;
+
+	auto get_entities() -> std::vector<Entity>;
 };
 
 /// @brief A class to store and manage systems.
@@ -32,6 +36,8 @@ class System {
 /// Systems that have inherited from `System` can be instantiated here using `create_system`.
 class SystemManager {
    public:
+	SystemManager(Scene *scene);
+
 	/// @brief Create a system.
 	/// @tparam T The system to create.
 	/// @return A reference to the system instance.
@@ -45,10 +51,11 @@ class SystemManager {
 	template <typename T>
 	auto set_signature(Signature signature) -> void;
 
-	auto entity_destroyed(std::reference_wrapper<Entity> entity) -> void;
-	auto entity_signature_changed(std::reference_wrapper<Entity> entity, Signature signature) -> void;
+	auto entity_destroyed(EntityId entity) -> void;
+	auto entity_signature_changed(EntityId entity, Signature signature) -> void;
 
    private:
+	Scene *scene;
 	std::unordered_map<std::string, Signature> signatures{};
 	std::unordered_map<std::string, System> systems{};
 };
