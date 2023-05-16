@@ -98,3 +98,77 @@ TEST_CASE("systems work") {
 		entity.destroy();
 	}
 }
+
+struct Baz {
+	int x = 3;
+};
+
+class TwoSystem : public System {
+   public:
+	auto product(Scene &scene) -> int {
+		auto product = 1;
+		for (auto &entity : get_entities(scene)) {
+			product *= entity.get_component<Foo>()->get().x;
+			product *= entity.get_component<Bar>()->get().x;
+		}
+		return product;
+	}
+};
+
+class ThreeSystem : public System {
+   public:
+	auto product(Scene &scene) -> int {
+		auto product = 1;
+		for (auto &entity : get_entities(scene)) {
+			product *= entity.get_component<Foo>()->get().x;
+			product *= entity.get_component<Bar>()->get().x;
+			product *= entity.get_component<Baz>()->get().x;
+		}
+		return product;
+	}
+};
+
+TEST_CASE("systems can look for multiple components") {
+	auto ctx = Context{TEST_WINDOW_OPTIONS};
+	auto scene = ctx.create_scene();
+
+	auto &two_system = scene.create_system<TwoSystem>();
+	auto two_signature = scene.create_signature<Foo, Bar>();
+	scene.set_system_signature<TwoSystem>(two_signature);
+
+	auto &three_system = scene.create_system<ThreeSystem>();
+	auto three_signature = scene.create_signature<Foo, Bar, Baz>();
+	scene.set_system_signature<ThreeSystem>(three_signature);
+
+	auto entity1 = scene.create_entity();
+	entity1.create_component<Foo>();
+
+	auto entity2 = scene.create_entity();
+	entity2.create_component<Bar>();
+
+	auto entity3 = scene.create_entity();
+	entity3.create_component<Baz>();
+
+	auto entity4 = scene.create_entity();
+	entity4.create_component<Foo>();
+	entity4.create_component<Bar>();
+
+	auto entity5 = scene.create_entity();
+	entity5.create_component<Foo>();
+	entity5.create_component<Baz>();
+
+	auto entity6 = scene.create_entity();
+	entity6.create_component<Bar>();
+	entity6.create_component<Baz>();
+
+	auto entity7 = scene.create_entity();
+	entity7.create_component<Foo>();
+	entity7.create_component<Bar>();
+	entity7.create_component<Baz>();
+
+	CHECK(two_system.product(scene) == 4);
+	CHECK(three_system.product(scene) == 6);
+
+	CHECK(two_system.ids.size() == 2);
+	CHECK(three_system.ids.size() == 1);
+}
