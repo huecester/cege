@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <functional>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -24,7 +25,7 @@ class ComponentArray : public GenericComponentArray {
 	/// @param id The entity ID to get the component of.
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
-	auto get_component(EntityId id) -> std::optional<T&>;
+	auto get_component(EntityId id) -> std::optional<std::reference_wrapper<T>>;
 
 	/// @brief Create a component in place.
 	/// @tparam ...Args Argument types for the component constructor.
@@ -67,7 +68,7 @@ class ComponentManager {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component(EntityId id) -> std::optional<T&>;
+	auto get_component(EntityId id) -> std::optional<std::reference_wrapper<T>>;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.

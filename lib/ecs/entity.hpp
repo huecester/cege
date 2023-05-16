@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <optional>
 #include <queue>
 
@@ -22,7 +23,7 @@ class Entity {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component() -> std::optional<T &>;
+	auto get_component() -> std::optional<std::reference_wrapper<T>>;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.

@@ -23,7 +23,7 @@ class FooSystem : public System {
 		auto sum = 0;
 
 		for (auto entity : entities) {
-			auto foo = entity.get().get_component<Foo>();
+			auto &foo = entity.get().get_component<Foo>()->get();
 			sum += foo.x;
 		}
 
@@ -37,7 +37,7 @@ class BarSystem : public System {
 		auto sum = 0;
 
 		for (auto entity : entities) {
-			auto bar = entity.get().get_component<Bar>();
+			auto &bar = entity.get().get_component<Bar>()->get();
 			sum += bar.x;
 		}
 

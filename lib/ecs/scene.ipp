@@ -8,7 +8,7 @@
 #include "types.hpp"
 
 template <typename T>
-inline auto Scene::get_component(const Entity &entity) -> std::optional<T &> {
+inline auto Scene::get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T >> {
 	return component_manager->get_component<T>(entity.get_id());
 }
 

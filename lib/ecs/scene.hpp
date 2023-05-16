@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <optional>
 #include <string_view>
@@ -31,7 +32,7 @@ class Scene {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component(const Entity &entity) -> std::optional<T &>;
+	auto get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T>>;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.

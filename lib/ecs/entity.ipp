@@ -4,7 +4,7 @@
 #include "scene.hpp"
 
 template <typename T>
-inline auto Entity::get_component() -> std::optional<T &> {
+inline auto Entity::get_component() -> std::optional<std::reference_wrapper<T>> {
 	return scene.get_component<T>(*this);
 }
 

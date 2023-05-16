@@ -8,12 +8,12 @@
 #include "types.hpp"
 
 template <typename T>
-inline auto ComponentArray<T>::get_component(EntityId id) -> std::optional<T&> {
+inline auto ComponentArray<T>::get_component(EntityId id) -> std::optional<std::reference_wrapper<T>> {
 	auto index_search = id_to_index_map.find(id);
 	if (index_search == id_to_index_map.end())
-		return std::nullopt;
+		return {};
 	auto [_, index] = *index_search;
-	return components[index];
+	return std::ref(components[index]);
 }
 
 template <typename T>
@@ -38,7 +38,7 @@ inline auto ComponentArray<T>::set_component(EntityId id, T&& component) -> T& {
 template <typename T>
 inline auto ComponentArray<T>::remove_component(EntityId target_id) -> std::optional<T> {
 	if (id_to_index_map.find(target_id) == id_to_index_map.end())
-		return std::nullopt;
+		return {};
 
 	auto target_index = id_to_index_map[target_id];
 	auto last_index = --len;
@@ -62,7 +62,7 @@ inline auto ComponentArray<T>::entity_destroyed(EntityId id) -> void {
 }
 
 template <typename T>
-inline auto ComponentManager::get_component(EntityId id) -> std::optional<T&> {
+inline auto ComponentManager::get_component(EntityId id) -> std::optional<std::reference_wrapper<T>> {
 	return get_component_array<T>().get_component(id);
 }
 

@@ -22,7 +22,7 @@ TEST_CASE("components work") {
 		CHECK(component.y == 5);
 
 		SUBCASE("components can be got") {
-			auto &get_component = entity.get_component<TestVector>();
+			auto &get_component = entity.get_component<TestVector>()->get();
 
 			CHECK(get_component.x == 2);
 			CHECK(get_component.y == 5);
@@ -33,7 +33,7 @@ TEST_CASE("components work") {
 
 			CHECK(component.x == 3);
 
-			auto &get_component = entity.get_component<TestVector>();
+			auto &get_component = entity.get_component<TestVector>()->get();
 
 			CHECK(get_component.x == 3);
 			get_component.x++;
@@ -53,7 +53,7 @@ TEST_CASE("components work") {
 
 	SUBCASE("components can be removed") {
 		entity.create_component<TestVector>(2, 5);
-		auto component = entity.remove_component<TestVector>();
+		auto component = *entity.remove_component<TestVector>();
 
 		CHECK(component.x == 2);
 		CHECK(component.y == 5);
