@@ -95,7 +95,7 @@ class RenderSystem : public System {
 
 			SDL_Rect dstrect{
 				.x = static_cast<int>(transform.position.x),
-				.y = static_cast<int>(transform.position.y - transform.scale.y),
+				.y = static_cast<int>(transform.position.y),
 				.w = static_cast<int>(transform.scale.x),
 				.h = static_cast<int>(transform.scale.y),
 			};
@@ -137,8 +137,8 @@ class CollisionSystem : public System {
 
 			auto left = transform.position.x;
 			auto right = transform.position.x + transform.scale.x;
-			auto top = transform.position.y - transform.scale.y;
-			auto bottom = transform.position.y;
+			auto top = transform.position.y;
+			auto bottom = transform.position.y + transform.scale.y;
 			Vector2 center{(left + right) / 2.0f, (top + bottom) / 2.0f};
 
 			// Walls
@@ -149,10 +149,10 @@ class CollisionSystem : public System {
 				transform.position.x = WINDOW_WIDTH - transform.scale.x;
 			}
 			if (top < 0) {
-				transform.position.y = transform.scale.y;
+				transform.position.y = 0;
 			}
 			if (bottom > WINDOW_HEIGHT) {
-				transform.position.y = WINDOW_HEIGHT;
+				transform.position.y = WINDOW_HEIGHT - transform.scale.y;
 			}
 
 			// Other entities
