@@ -56,6 +56,13 @@ inline auto Scene::create_system() -> T & {
 	return system_manager->create_system<T>();
 }
 
+template <typename T, typename Sig1, typename... Sigs>
+inline auto Scene::create_system() -> T & {
+	auto &system = system_manager->create_system<T>();
+	set_system_signature<T, Sig1, Sigs...>();
+	return system;
+}
+
 template <typename T>
 inline auto Scene::create_signature() const -> Signature {
 	Signature signature{};
@@ -72,4 +79,10 @@ inline auto Scene::create_signature() const -> Signature {
 template <typename T>
 inline auto Scene::set_system_signature(Signature signature) -> void {
 	system_manager->set_signature<T>(signature);
+}
+
+template <typename T, typename Sig1, typename... Sigs>
+inline auto Scene::set_system_signature() -> void {
+	auto signature = create_signature<Sig1, Sigs...>();
+	set_system_signature<T>(signature);
 }

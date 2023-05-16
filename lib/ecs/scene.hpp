@@ -74,6 +74,15 @@ class Scene {
 	template <typename T>
 	auto create_system() -> T &;
 
+	/// @brief Create a system.
+	/// @tparam T The system to create.
+	/// @tparam Sig1 A component type to use for the signature.
+	/// @tparam ...Sigs The rest of the component types to use for the signature.
+	/// @return A reference to the system instance.
+	/// @throw std::runtime_error Throws if the system has already been created.
+	template <typename T, typename Sig1, typename... Sigs>
+	auto create_system() -> T &;
+
 	/// @brief Create a signature from a component type.
 	/// @tparam T The component type to create a signature of.
 	/// @return The signature.
@@ -97,6 +106,13 @@ class Scene {
 	/// @param signature The signature to set.
 	template <typename T>
 	auto set_system_signature(Signature signature) -> void;
+
+	/// @brief Set a system's signature.
+	/// @tparam T The system to set the signature of.
+	/// @tparam Sig1 A component type to use for the signature.
+	/// @tparam ...Sigs The rest of the component types to use for the signature.
+	template <typename T, typename Sig1, typename... Sigs>
+	auto set_system_signature() -> void;
 
    private:
 	std::unique_ptr<EntityManager> entity_manager;

@@ -97,13 +97,8 @@ int main() {
 	auto scene = ctx.create_scene();
 
 	// Systems
-	auto &render_system = scene.create_system<RenderSystem>();
-	auto render_signature = scene.create_signature<Transform, Texture>();
-	scene.set_system_signature<RenderSystem>(render_signature);
-
-	auto &player_system = scene.create_system<PlayerSystem>();
-	auto player_signature = scene.create_signature<Transform, Player>();
-	scene.set_system_signature<PlayerSystem>(player_signature);
+	auto &render_system = scene.create_system<RenderSystem, Transform, Texture>();
+	auto &player_system = scene.create_system<PlayerSystem, Transform, Player>();
 
 	// Entities
 	auto rick = scene.create_entity();
@@ -118,6 +113,11 @@ int main() {
 	auto prev_fixed = prev;
 
 	while (quit == false) {
+		// Events
+		while (SDL_PollEvent(&e)) {
+			if (e.type == SDL_QUIT) quit = true;
+		}
+
 		auto now = SDL_GetTicks64();
 
 		// Fixed loop
@@ -138,10 +138,5 @@ int main() {
 
 		// Render
 		render_system.render(scene, window);
-
-		// Events
-		while (SDL_PollEvent(&e)) {
-			if (e.type == SDL_QUIT) quit = true;
-		}
 	}
 }
