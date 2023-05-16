@@ -9,7 +9,7 @@
 #include "scene.hpp"
 
 EntityManager::EntityManager() {
-	for (auto i = 0; i < MAX_ENTITIES; i++)
+	for (auto i : std::ranges::views::iota(0, MAX_ENTITIES))
 		available_ids.push(i);
 }
 
