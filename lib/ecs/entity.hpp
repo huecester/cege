@@ -1,29 +1,11 @@
 #pragma once
 
+#include <optional>
 #include <queue>
 
 #include "types.hpp"
 
 class Scene;
-
-/// @brief Manager for entity IDs.
-class EntityManager {
-   public:
-	EntityManager();
-
-	/// @brief Reserve an entity ID.
-	/// @return An unused ID.
-	/// @throw std::length_error Throws if too many entities are created.
-	auto reserve_id() -> EntityId;
-
-	/// @brief Free an entity ID to be used again.
-	/// @param id The ID to be freed.
-	/// @throw std::out_of_range Throws if an invalid entity ID is passed.
-	auto free_id(EntityId id) -> void;
-
-   private:
-	std::queue<EntityId> available_ids{};
-};
 
 /// @brief Helper class to manage an entity.
 class Entity {
@@ -40,7 +22,7 @@ class Entity {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component() -> T &;
+	auto get_component() -> std::optional<T &>;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
@@ -64,7 +46,7 @@ class Entity {
 	/// @return The component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto remove_component() -> T;
+	auto remove_component() -> std::optional<T>;
 
 	auto get_signature() const -> Signature;
 	auto set_signature(Signature signature) -> void;
@@ -73,6 +55,25 @@ class Entity {
 	Scene &scene;
 	EntityId id;
 	Signature signature;
+};
+
+/// @brief Manager for entity IDs.
+class EntityManager {
+   public:
+	EntityManager();
+
+	/// @brief Reserve an entity ID.
+	/// @return An unused ID.
+	/// @throw std::length_error Throws if too many entities are created.
+	auto reserve_id() -> EntityId;
+
+	/// @brief Free an entity ID to be used again.
+	/// @param id The ID to be freed.
+	/// @throw std::out_of_range Throws if an invalid entity ID is passed.
+	auto free_id(EntityId id) -> void;
+
+   private:
+	std::queue<EntityId> available_ids{};
 };
 
 #include "entity.ipp"

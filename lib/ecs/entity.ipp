@@ -4,7 +4,7 @@
 #include "scene.hpp"
 
 template <typename T>
-inline auto Entity::get_component() -> T & {
+inline auto Entity::get_component() -> std::optional<T &> {
 	return scene.get_component<T>(*this);
 }
 
@@ -19,6 +19,6 @@ inline auto Entity::set_component(T &&component) -> T & {
 }
 
 template <typename T>
-inline auto Entity::remove_component() -> T {
+inline auto Entity::remove_component() -> std::optional<T> {
 	return scene.remove_component<T>(*this);
 }

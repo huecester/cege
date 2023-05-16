@@ -8,10 +8,10 @@
 #include "types.hpp"
 
 template <typename T>
-inline auto ComponentArray<T>::get_component(EntityId id) -> T& {
+inline auto ComponentArray<T>::get_component(EntityId id) -> std::optional<T&> {
 	auto index_search = id_to_index_map.find(id);
 	if (index_search == id_to_index_map.end())
-		throw std::runtime_error{fmt::format("Entity {} does not have a(n) `{}` component.", id, typeid(T).name())};
+		return std::nullopt;
 	auto [_, index] = *index_search;
 	return components[index];
 }
@@ -36,9 +36,9 @@ inline auto ComponentArray<T>::set_component(EntityId id, T&& component) -> T& {
 }
 
 template <typename T>
-inline auto ComponentArray<T>::remove_component(EntityId target_id) -> T {
+inline auto ComponentArray<T>::remove_component(EntityId target_id) -> std::optional<T> {
 	if (id_to_index_map.find(target_id) == id_to_index_map.end())
-		throw std::runtime_error{fmt::format("Entity {} does not have a(n) `{}` component.", target_id, typeid(T).name())};
+		return std::nullopt;
 
 	auto target_index = id_to_index_map[target_id];
 	auto last_index = --len;
@@ -62,7 +62,7 @@ inline auto ComponentArray<T>::entity_destroyed(EntityId id) -> void {
 }
 
 template <typename T>
-inline auto ComponentManager::get_component(EntityId id) -> T& {
+inline auto ComponentManager::get_component(EntityId id) -> std::optional<T&> {
 	return get_component_array<T>().get_component(id);
 }
 
@@ -77,8 +77,21 @@ inline auto ComponentManager::set_component(EntityId id, T&& component) -> T& {
 }
 
 template <typename T>
-inline auto ComponentManager::remove_component(EntityId id) -> T {
+inline auto ComponentManager::remove_component(EntityId id) -> std::optional<T> {
 	return get_component_array<T>().remove_component(id);
+}
+
+template <typename T>
+inline auto ComponentManager::get_component_id() -> ComponentId {
+	auto type_name = typeid(T).name();
+
+	auto search = component_ids.find(type_name);
+	if (search == component_ids.end()) {
+		register_component_array<T>();
+		search = component_ids.find(type_name);
+	}
+
+	return search->second;
 }
 
 template <typename T>
@@ -94,9 +107,11 @@ inline auto ComponentManager::get_component_array() -> ComponentArray<T>& {
 
 template <typename T>
 inline auto ComponentManager::register_component_array() -> void {
+	if (next_component_id >= MAX_COMPONENTS)
+		throw std::length_error{"Too many components registered."};
+
 	auto type_name = typeid(T).name();
-	if (component_arrays.find(type_name) != component_arrays.end())
-		throw std::runtime_error{fmt::format("Component `{}` cannot be registered twice.", type_name)};
+	if (component_arrays.find(type_name) != component_arrays.end()) return;
 	component_arrays.insert({type_name, std::make_unique<ComponentArray<T>>()});
 	component_ids.insert({type_name, next_component_id++});
 }

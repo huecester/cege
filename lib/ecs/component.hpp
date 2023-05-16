@@ -1,8 +1,7 @@
 #pragma once
 
-#include <fmt/core.h>
-
 #include <array>
+#include <optional>
 #include <string>
 #include <unordered_map>
 
@@ -25,7 +24,7 @@ class ComponentArray : public GenericComponentArray {
 	/// @param id The entity ID to get the component of.
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
-	auto get_component(EntityId id) -> T&;
+	auto get_component(EntityId id) -> std::optional<T&>;
 
 	/// @brief Create a component in place.
 	/// @tparam ...Args Argument types for the component constructor.
@@ -47,7 +46,7 @@ class ComponentArray : public GenericComponentArray {
 	/// @param id The entity ID to remove the component from.
 	/// @return The component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
-	auto remove_component(EntityId target_id) -> T;
+	auto remove_component(EntityId target_id) -> std::optional<T>;
 
 	auto entity_destroyed(EntityId id) -> void override;
 
@@ -68,7 +67,7 @@ class ComponentManager {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto get_component(EntityId id) -> T&;
+	auto get_component(EntityId id) -> std::optional<T&>;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
@@ -95,22 +94,14 @@ class ComponentManager {
 	/// @return The component.
 	/// @throw std::runtime_error Throws if the entity doesn't have a component of this type.
 	template <typename T>
-	auto remove_component(EntityId id) -> T;
+	auto remove_component(EntityId id) -> std::optional<T>;
 
 	/// @brief Get a component's ID.
 	/// @tparam T The component to get the ID of.
 	/// @return The component's ID.
 	/// @throw std::runtime_error Throws if the component has not already been used.
 	template <typename T>
-	auto get_component_id() const -> ComponentId {
-		auto type_name = typeid(T).name();
-
-		auto search = component_ids.find(type_name);
-		if (search == component_ids.end())
-			throw std::runtime_error{fmt::format("Cannot find ID of component `{}` before use.", type_name)};
-
-		return search->second;
-	}
+	auto get_component_id() -> ComponentId;
 
 	auto entity_destroyed(EntityId id) -> void;
 

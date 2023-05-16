@@ -8,7 +8,7 @@
 #include "types.hpp"
 
 template <typename T>
-inline auto Scene::get_component(const Entity &entity) -> T & {
+inline auto Scene::get_component(const Entity &entity) -> std::optional<T &> {
 	return component_manager->get_component<T>(entity.get_id());
 }
 
@@ -39,7 +39,7 @@ inline auto Scene::set_component(Entity &entity, T &&component) -> T & {
 }
 
 template <typename T>
-inline auto Scene::remove_component(Entity &entity) -> T {
+inline auto Scene::remove_component(Entity &entity) -> std::optional<T> {
 	auto component = component_manager->remove_component<T>(entity.get_id());
 
 	auto signature = entity.get_signature();
