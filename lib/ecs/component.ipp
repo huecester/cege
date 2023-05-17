@@ -41,7 +41,6 @@ inline auto ComponentArray<T>::remove_component(EntityId target_id) -> std::opti
 		return {};
 
 	auto target_index = id_to_index_map[target_id];
-	auto target_index = id_to_index_map[target_id];
 	auto last_index = --len;
 	auto target_component = std::move(components[target_index]);
 	components[target_index] = std::move(components[last_index]);
@@ -49,12 +48,7 @@ inline auto ComponentArray<T>::remove_component(EntityId target_id) -> std::opti
 	auto last_id = index_to_id_map[last_index];
 	id_to_index_map[last_id] = target_index;
 	index_to_id_map[target_index] = last_id;
-	auto last_id = index_to_id_map[last_index];
-	id_to_index_map[last_id] = target_index;
-	index_to_id_map[target_index] = last_id;
 
-	id_to_index_map.erase(target_id);
-	index_to_id_map.erase(last_index);
 	id_to_index_map.erase(target_id);
 	index_to_id_map.erase(last_index);
 
