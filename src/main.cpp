@@ -1,7 +1,6 @@
 #include <SDL.h>
 
 #include <cmath>
-#include <iostream>
 
 #include "context.hpp"
 #include "ecs/scene.hpp"
@@ -125,8 +124,6 @@ class PlayerSystem : public System {
 				transform.position.y -= player.speed * delta;
 			if (keyboard_states[SDL_SCANCODE_D])
 				transform.position.x += player.speed * delta;
-
-			std::cout << transform.position.x << "\t" << transform.position.y << "\n";
 		}
 	}
 };
