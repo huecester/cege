@@ -1,6 +1,7 @@
 #include <SDL.h>
 
 #include <cmath>
+#include <iostream>
 
 #include "context.hpp"
 #include "ecs/scene.hpp"
@@ -95,7 +96,7 @@ class RenderSystem : public System {
 
 			SDL_Rect dstrect{
 				.x = static_cast<int>(transform.position.x),
-				.y = static_cast<int>(transform.position.y),
+				.y = static_cast<int>(WINDOW_HEIGHT - transform.position.y - transform.scale.y),
 				.w = static_cast<int>(transform.scale.x),
 				.h = static_cast<int>(transform.scale.y),
 			};
@@ -117,13 +118,15 @@ class PlayerSystem : public System {
 			const auto keyboard_states = SDL_GetKeyboardState(nullptr);
 
 			if (keyboard_states[SDL_SCANCODE_W])
-				transform.position.y -= player.speed * delta;
+				transform.position.y += player.speed * delta;
 			if (keyboard_states[SDL_SCANCODE_A])
 				transform.position.x -= player.speed * delta;
 			if (keyboard_states[SDL_SCANCODE_S])
-				transform.position.y += player.speed * delta;
+				transform.position.y -= player.speed * delta;
 			if (keyboard_states[SDL_SCANCODE_D])
 				transform.position.x += player.speed * delta;
+
+			std::cout << transform.position.x << "\t" << transform.position.y << "\n";
 		}
 	}
 };
@@ -137,8 +140,8 @@ class CollisionSystem : public System {
 
 			auto left = transform.position.x;
 			auto right = transform.position.x + transform.scale.x;
-			auto top = transform.position.y;
-			auto bottom = transform.position.y + transform.scale.y;
+			auto top = transform.position.y + transform.scale.y;
+			auto bottom = transform.position.y;
 			Vector2 center{(left + right) / 2.0f, (top + bottom) / 2.0f};
 
 			// Walls
@@ -148,10 +151,10 @@ class CollisionSystem : public System {
 			if (right > WINDOW_WIDTH) {
 				transform.position.x = WINDOW_WIDTH - transform.scale.x;
 			}
-			if (top < 0) {
+			if (bottom < 0) {
 				transform.position.y = 0;
 			}
-			if (bottom > WINDOW_HEIGHT) {
+			if (top > WINDOW_HEIGHT) {
 				transform.position.y = WINDOW_HEIGHT - transform.scale.y;
 			}
 
@@ -163,11 +166,11 @@ class CollisionSystem : public System {
 				auto &other_collider = other.get_component<Collider>()->get();
 				auto other_left = other_transform.position.x;
 				auto other_right = other_transform.position.x + other_transform.scale.x;
-				auto other_top = other_transform.position.y;
-				auto other_bottom = other_transform.position.y + other_transform.scale.y;
+				auto other_top = other_transform.position.y + other_transform.scale.y;
+				auto other_bottom = other_transform.position.y;
 				Vector2 other_center{(other_left + other_right) / 2.0f, (other_top + other_bottom) / 2.0f};
 
-				if (bottom <= other_top || top >= other_bottom || right <= other_left || left >= other_right) continue;
+				if (top <= other_bottom || bottom >= other_top || right <= other_left || left >= other_right) continue;
 
 				// Points from other to this
 				auto normal_vector = (other_center - center).normalize();
