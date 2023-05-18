@@ -1,11 +1,7 @@
 #include <SDL.h>
 
+#include <cege.hpp>
 #include <cmath>
-
-#include "context.hpp"
-#include "ecs/scene.hpp"
-#include "sdl/texture.hpp"
-#include "sdl/window.hpp"
 
 constexpr auto WINDOW_TITLE = "Hello, SDL!";
 constexpr auto WINDOW_WIDTH = 640;
