@@ -19,9 +19,9 @@ struct WindowOptions {
 	/// @brief Height of the window.
 	int h;
 
-	/// @brief 0 or multiple `SDL_WindowFlags` OR'd together.
-	Uint32 window_flags;
+	/// @brief 0 or multiple `SDL_WindowFlags` OR'd together (SDL_WINDOW_SHOWN by default).
+	Uint32 window_flags = SDL_WINDOW_SHOWN;
 
-	/// @brief 0 or multiple `SDL_RendererFlags` OR'd together.
-	Uint32 renderer_flags;
+	/// @brief 0 or multiple `SDL_RendererFlags` OR'd together (SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC by default).
+	Uint32 renderer_flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
 };
