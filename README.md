@@ -111,7 +111,7 @@ class FooSystem : public System {
 
       for (auto &entity : get_entities(scene)) {
         auto &foo = entity.get_component<Foo>()->get();
-        std::cout << foo.val << "\n";
+        std::cout << foo.name << "\n";
       }
     }
 };
@@ -125,7 +125,7 @@ class FooBarSystem : public System {
         auto &foo = entity.get_component<Foo>()->get();
         auto &bar = entity.get_component<Bar>()->get();
 
-        std::cout << foo.val << "\t" << bar.val << "\n";
+        std::cout << foo.name << "\t" << bar.name << "\n";
       }
     }
 }
