@@ -55,7 +55,7 @@ struct Transform {
 };
 
 int main() {
-  /* Initialize context and create a scene */
+  /* Initialize context and create a scene... */
 
   auto player = scene.create_entity();
   player.create_component<Transform>();
@@ -86,7 +86,7 @@ After defining a system, an instance of it can be created in a scene. Using `Sce
 
 ```c++
 int main() {
-  /* Initialize context and create a scene */
+  /* Initialize context and create a scene... */
 
   auto &test_system = scene.create_system<TestSystem>();
   test_system.run();
@@ -131,7 +131,7 @@ class FooBarSystem : public System {
 }
 
 int main() {
-  /* Initialize context and create a scene */
+  /* Initialize context and create a scene... */
 
   // The signature is created using all the types that follow the system:
   auto &foo_system = scene.create_system<FooSystem, Foo>(); // Signature: Foo
