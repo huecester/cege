@@ -215,11 +215,9 @@ int main() {
 		auto now = SDL_GetTicks64();
 
 		// Fixed loop
-		auto delta_fixed = now - prev_fixed;
-		if (delta_fixed >= FIXED_TIMESTEP_MS) {
+		while (now - prev_fixed >= FIXED_TIMESTEP_MS) {
 			// Fixed update
-			// auto delta_fixed_s = delta_fixed / 1000.0f;
-			// fixed_update_system.update(delta_fixed_s);
+			// fixed_update_system.update();
 			prev_fixed += FIXED_TIMESTEP_MS;
 		}
 
