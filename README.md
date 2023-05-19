@@ -171,7 +171,7 @@ int main() {
 
   // All components must be present, so if a system has a signature with multiple components, entities must have all of those components to be captured by the system.
   // foo_bar1 and foo_bar2 have both a Foo and Bar component, so they are captured by this system. All the other entities don't match the signature, so they are ignored.
-  foo_bar_system.print(scene); // 30
+  foo_bar_system.print(scene);
   /*
     Foo foo_bar1    Bar foo_bar1
     Foo foo_bar2    Bar foo_bar2
