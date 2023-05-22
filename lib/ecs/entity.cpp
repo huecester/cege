@@ -37,7 +37,11 @@ auto EntityManager::create_entity(Scene *scene) -> std::shared_ptr<Entity> {
 }
 
 auto EntityManager::get_entity(EntityId id) -> std::shared_ptr<Entity> {
-	auto entity = entities.at(id);
+	auto entity_ptr = entities.at(id);
+	if (entity_ptr.expired())
+		throw std::runtime_error{fmt::format("No entity with ID `{}` exists.", id)};
+
+	auto entity = entity_ptr.lock();
 	if (entity == nullptr)
 		throw std::runtime_error{fmt::format("No entity with ID `{}` exists.", id)};
 	return entity;

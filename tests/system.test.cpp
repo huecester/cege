@@ -25,7 +25,7 @@ class FooSystem : public System {
 		auto sum = 0;
 
 		for (auto entity : entities) {
-			auto &foo = entity->get_component<Foo>()->get();
+			auto &foo = entity->get_component_raw<Foo>();
 			sum += foo.x;
 		}
 
@@ -39,7 +39,7 @@ class BarSystem : public System {
 		auto sum = 0;
 
 		for (auto entity : entities) {
-			auto &bar = entity->get_component<Bar>()->get();
+			auto &bar = entity->get_component_raw<Bar>();
 			sum += bar.x;
 		}
 
@@ -100,8 +100,8 @@ class TwoSystem : public System {
 	auto product(Scene &scene) -> int {
 		auto product = 1;
 		for (auto &entity : entities) {
-			product *= entity->get_component<Foo>()->get().x;
-			product *= entity->get_component<Bar>()->get().x;
+			product *= entity->get_component_raw<Foo>().x;
+			product *= entity->get_component_raw<Bar>().x;
 		}
 		return product;
 	}
@@ -112,9 +112,9 @@ class ThreeSystem : public System {
 	auto product(Scene &scene) -> int {
 		auto product = 1;
 		for (auto &entity : entities) {
-			product *= entity->get_component<Foo>()->get().x;
-			product *= entity->get_component<Bar>()->get().x;
-			product *= entity->get_component<Baz>()->get().x;
+			product *= entity->get_component_raw<Foo>().x;
+			product *= entity->get_component_raw<Bar>().x;
+			product *= entity->get_component_raw<Baz>().x;
 		}
 		return product;
 	}

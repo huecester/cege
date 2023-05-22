@@ -18,9 +18,14 @@ auto Scene::create_entity() -> std::shared_ptr<Entity> {
 
 auto Scene::destroy_entity(Entity& entity) -> void {
 	auto id = entity.get_id();
-	auto entity_ptr = entity_manager->get_entity(id);
 
 	entity_manager->destroy_entity(id);
 	component_manager->entity_destroyed(id);
-	system_manager->entity_destroyed(entity_ptr);
+
+	try {
+		auto entity_ptr = entity_manager->get_entity(id);
+		system_manager->entity_destroyed(entity_ptr);
+	} catch (const std::runtime_error&) {
+		return;
+	}
 }

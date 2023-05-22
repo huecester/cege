@@ -31,7 +31,7 @@ class Entity {
 	/// @return A reference to the component.
 	/// @throw std::runtime_error Throws if the entity doesn't have this component.
 	template <typename T>
-	auto get_component_raw() -> T&;
+	auto get_component_raw() -> T &;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
@@ -77,7 +77,7 @@ class Entity {
 
 /// @brief Manager for entities.
 ///
-/// This class stores `std::shared_ptr<Entity>`'s, which can be created, acquired, and destroyed.
+/// This class stores `std::weak_ptr<Entity>`'s, which can be created, acquired, and destroyed.
 class EntityManager {
    public:
 	EntityManager();
@@ -101,7 +101,7 @@ class EntityManager {
 
    private:
 	std::queue<EntityId> available_ids{};
-	std::array<std::shared_ptr<Entity>, MAX_ENTITIES> entities{};
+	std::array<std::weak_ptr<Entity>, MAX_ENTITIES> entities{};
 };
 
 #include "entity.ipp"
