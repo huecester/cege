@@ -73,6 +73,14 @@ class ComponentManager {
 	template <typename T>
 	auto get_component(EntityId id) -> std::optional<std::reference_wrapper<T>>;
 
+	/// @brief Get an entity's component, throwing an exception if it doesn't exist.
+	/// @tparam T The component type to get.
+	/// @param id The entity ID to get the component of.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity doesn't have this component.
+	template <typename T>
+	auto get_component_raw(EntityId id) -> T&;
+
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
 	/// @tparam ...Args Argument types for the component constructor.

@@ -33,6 +33,14 @@ class Scene {
 	template <typename T>
 	auto get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T>>;
 
+	/// @brief Get an entity's component, throwing an exception if it doesn't exist.
+	/// @tparam T The component type to get.
+	/// @param entity The entity to get the component of.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity doesn't have this component.
+	template <typename T>
+	auto get_component_raw(const Entity &entity) -> T &;
+
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
 	/// @tparam ...Args Argument types for the component constructor.

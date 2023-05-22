@@ -26,6 +26,13 @@ class Entity {
 	template <typename T>
 	auto get_component() -> std::optional<std::reference_wrapper<T>>;
 
+	/// @brief Get an entity's component, throwing an exception if it doesn't exist.
+	/// @tparam T The component type to get.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity doesn't have this component.
+	template <typename T>
+	auto get_component_raw() -> T&;
+
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.
 	/// @tparam ...Args Argument types for the component constructor.

@@ -83,8 +83,8 @@ class RenderSystem : public System {
 		window.clear();
 
 		for (auto &entity : entities) {
-			auto &texture = entity->get_component<Texture>()->get();
-			auto &transform = entity->get_component<Transform>()->get();
+			auto &texture = entity->get_component_raw<Texture>();
+			auto &transform = entity->get_component_raw<Transform>();
 
 			SDL_Rect dstrect{
 				.x = static_cast<int>(transform.position.x),
@@ -104,8 +104,8 @@ class PlayerSystem : public System {
    public:
 	auto move(float delta) -> void {
 		for (auto &entity : entities) {
-			auto &transform = entity->get_component<Transform>()->get();
-			auto &player = entity->get_component<Player>()->get();
+			auto &transform = entity->get_component_raw<Transform>();
+			auto &player = entity->get_component_raw<Player>();
 
 			const auto keyboard_states = SDL_GetKeyboardState(nullptr);
 
@@ -125,8 +125,8 @@ class CollisionSystem : public System {
    public:
 	auto update() {
 		for (auto &entity : entities) {
-			auto &transform = entity->get_component<Transform>()->get();
-			auto &collider = entity->get_component<Collider>()->get();
+			auto &transform = entity->get_component_raw<Transform>();
+			auto &collider = entity->get_component_raw<Collider>();
 
 			auto left = transform.position.x;
 			auto right = transform.position.x + transform.scale.x;
@@ -152,8 +152,8 @@ class CollisionSystem : public System {
 			for (auto &other : entities) {
 				if (entity->get_id() == other->get_id()) continue;
 
-				auto &other_transform = other->get_component<Transform>()->get();
-				auto &other_collider = other->get_component<Collider>()->get();
+				auto &other_transform = other->get_component_raw<Transform>();
+				auto &other_collider = other->get_component_raw<Collider>();
 				auto other_left = other_transform.position.x;
 				auto other_right = other_transform.position.x + other_transform.scale.x;
 				auto other_top = other_transform.position.y + other_transform.scale.y;
