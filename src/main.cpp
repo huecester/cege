@@ -2,6 +2,7 @@
 
 #include <cege.hpp>
 #include <cmath>
+#include <glm/glm.hpp>
 
 constexpr auto WINDOW_TITLE = "Hello, SDL!";
 constexpr auto WINDOW_WIDTH = 640;
@@ -11,59 +12,9 @@ constexpr WindowOptions WINDOW_OPTIONS{WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL
 
 constexpr auto FIXED_TIMESTEP_MS = 1000 / 60;  // 60fps -> 1000 ms per 60 frames
 
-struct Vector2 {
-	float x, y;
-
-	auto operator+(const Vector2 &other) const -> Vector2 {
-		return Vector2{
-			x + other.x,
-			y + other.y,
-		};
-	}
-
-	auto operator-(const Vector2 &other) const -> Vector2 {
-		return Vector2{
-			x - other.x,
-			y - other.y,
-		};
-	}
-
-	auto operator*(float scalar) const -> Vector2 {
-		return Vector2{
-			x * scalar,
-			y * scalar,
-		};
-	}
-
-	auto operator+=(const Vector2 &other) -> Vector2 & {
-		x += other.x;
-		y += other.y;
-		return *this;
-	}
-
-	auto operator-=(const Vector2 &other) -> Vector2 & {
-		x -= other.x;
-		y -= other.y;
-		return *this;
-	}
-
-	auto operator*=(float scalar) -> Vector2 & {
-		x *= scalar;
-		y *= scalar;
-		return *this;
-	}
-
-	auto normalize() -> Vector2 & {
-		auto length = std::sqrt(x * x + y * y);
-		x /= length;
-		y /= length;
-		return *this;
-	}
-};
-
 struct Transform {
-	Vector2 position{0.0f, 0.0f};
-	Vector2 scale{100.0f, 100.0f};
+	glm::vec2 position{0.0f, 0.0f};
+	glm::vec2 scale{100.0f, 100.0f};
 };
 
 struct Player {
@@ -132,7 +83,7 @@ class CollisionSystem : public System {
 			auto right = transform.position.x + transform.scale.x;
 			auto top = transform.position.y + transform.scale.y;
 			auto bottom = transform.position.y;
-			Vector2 center{(left + right) / 2.0f, (top + bottom) / 2.0f};
+			glm::vec2 center{(left + right) / 2.0f, (top + bottom) / 2.0f};
 
 			// Walls
 			if (left < 0) {
@@ -158,12 +109,12 @@ class CollisionSystem : public System {
 				auto other_right = other_transform.position.x + other_transform.scale.x;
 				auto other_top = other_transform.position.y + other_transform.scale.y;
 				auto other_bottom = other_transform.position.y;
-				Vector2 other_center{(other_left + other_right) / 2.0f, (other_top + other_bottom) / 2.0f};
+				glm::vec2 other_center{(other_left + other_right) / 2.0f, (other_top + other_bottom) / 2.0f};
 
 				if (top <= other_bottom || bottom >= other_top || right <= other_left || left >= other_right) continue;
 
 				// Points from other to this
-				auto normal_vector = (other_center - center).normalize();
+				auto normal_vector = glm::normalize(other_center - center);
 				constexpr auto NUDGE_STRENGTH = 1.0f;
 				if (!collider.stationary)
 					transform.position -= normal_vector * NUDGE_STRENGTH;
