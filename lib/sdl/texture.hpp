@@ -34,7 +34,7 @@ class Texture {
 	auto get_height() const -> int;
 
    private:
-	std::unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture;
+	std::shared_ptr<SDL_Texture> texture;
 	int width, height;
 
 	static auto initialize_texture(const std::filesystem::path &path, SDL_Renderer *renderer) -> SDL_Texture *;

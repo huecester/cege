@@ -190,14 +190,14 @@ int main() {
 	// Entities
 	auto rick = scene.create_entity();
 	rick.create_component<Transform>();
-	rick.create_component<Texture>("assets/rick_astley.png", window.get_renderer());
+	rick.create_component<Texture>(window.load_image("assets/rick_astley.png"));
 	rick.create_component<Player>();
 	rick.create_component<Collider>();
 
 	auto ball = scene.create_entity();
 	auto &ball_transform = ball.create_component<Transform>();
 	ball_transform.position = {300.0f, 300.0f};
-	ball.create_component<Texture>("assets/ball.jpg", window.get_renderer());
+	ball.create_component<Texture>(window.load_image("assets/ball.jpg"));
 	ball.create_component<Collider>();
 
 	SDL_Event e;
