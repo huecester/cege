@@ -2,32 +2,26 @@
 
 #include <algorithm>
 #include <functional>
+#include <memory>
+#include <utility>
 
 #include "entity.hpp"
 #include "scene.hpp"
 #include "types.hpp"
 
-auto System::get_entities(Scene& scene) const -> std::vector<Entity> {
-	std::vector<Entity> entities{};
-
-	for (auto id : ids)
-		entities.push_back(scene.create_entity(id));
-
-	return entities;
-}
-
-auto SystemManager::entity_destroyed(EntityId id) -> void {
+auto SystemManager::entity_destroyed(std::shared_ptr<Entity> entity) -> void {
 	for (auto& [_, system] : systems)
-		system.ids.erase(id);
+		system.entities.erase(entity);
 }
 
-auto SystemManager::entity_signature_changed(EntityId id, Signature signature) -> void {
+auto SystemManager::entity_signature_changed(std::shared_ptr<Entity> entity, Signature signature) -> void {
 	for (auto& [type, system] : systems) {
+		auto entity_ptr = std::shared_ptr{entity};
 		auto system_signature = signatures[type];
 
 		if ((signature & system_signature) == system_signature)
-			system.ids.insert(id);
+			system.entities.insert(entity_ptr);
 		else
-			system.ids.erase(id);
+			system.entities.erase(entity_ptr);
 	}
 }

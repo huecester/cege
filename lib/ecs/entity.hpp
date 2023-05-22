@@ -1,8 +1,11 @@
 #pragma once
 
+#include <array>
+#include <memory>
 #include <optional>
 #include <queue>
 
+#include "constants.hpp"
 #include "types.hpp"
 
 class Scene;
@@ -11,6 +14,7 @@ class Scene;
 class Entity {
    public:
 	Entity(Scene *scene, EntityId id);
+	~Entity();
 
 	/// @brief Get this entity's ID.
 	/// @return This entity's ID.
@@ -45,11 +49,6 @@ class Entity {
 	template <typename T>
 	auto remove_component() -> std::optional<T>;
 
-	/// @brief Destroy this entity.
-	///
-	/// Frees all resources associated to this entity, including IDs and any associated components.
-	auto destroy() -> void;
-
 	/// @internal
 	/// @brief Get this entity's signature.
 	///
@@ -69,23 +68,33 @@ class Entity {
 	Signature signature;
 };
 
-/// @brief Manager for entity IDs.
+/// @brief Manager for entities.
+///
+/// This class stores `std::shared_ptr<Entity>`'s, which can be created, acquired, and destroyed.
 class EntityManager {
    public:
 	EntityManager();
 
-	/// @brief Reserve an entity ID.
-	/// @return An unused ID.
+	/// @brief Create a new entity.
+	/// @param scene A pointer to the attached scene.
+	/// @return A shared pointer to the entity.
 	/// @throw std::length_error Throws if too many entities are created.
-	auto reserve_id() -> EntityId;
+	auto create_entity(Scene *scene) -> std::shared_ptr<Entity>;
 
-	/// @brief Free an entity ID to be used again.
-	/// @param id The ID to be freed.
+	/// @brief Get an existing entity.
+	/// @param id The entity's ID.
+	/// @return A shared pointer to the entity.
+	/// @throw std::runtime_error Throws if no entity with ID `id` exists.
 	/// @throw std::out_of_range Throws if an invalid entity ID is passed.
-	auto free_id(EntityId id) -> void;
+	auto get_entity(EntityId id) -> std::shared_ptr<Entity>;
+
+	/// @brief Destroy an entity.
+	/// @param id The entity's ID.
+	auto destroy_entity(EntityId id) -> void;
 
    private:
 	std::queue<EntityId> available_ids{};
+	std::array<std::shared_ptr<Entity>, MAX_ENTITIES> entities{};
 };
 
 #include "entity.ipp"
