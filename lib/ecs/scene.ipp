@@ -12,6 +12,11 @@ inline auto Scene::get_component(const Entity &entity) -> std::optional<std::ref
 	return component_manager->get_component<T>(entity.get_id());
 }
 
+template <typename T>
+inline auto Scene::get_component_raw(const Entity &entity) -> T &{
+	return component_manager->get_component_raw<T>(entity.get_id());
+}
+
 template <typename T, typename... Args>
 inline auto Scene::create_component(Entity &entity, Args &&...args) -> T & {
 	auto &component_ref = component_manager->create_component<T>(entity.get_id(), std::forward<Args>(args)...);
@@ -20,7 +25,7 @@ inline auto Scene::create_component(Entity &entity, Args &&...args) -> T & {
 	signature.set(component_manager->get_component_id<T>());
 	entity.set_signature(signature);
 
-	system_manager->entity_signature_changed(entity.get_id(), signature);
+	system_manager->entity_signature_changed(entity_manager->get_entity(entity.get_id()), signature);
 
 	return component_ref;
 }
@@ -33,7 +38,7 @@ inline auto Scene::set_component(Entity &entity, T &&component) -> T & {
 	signature.set(component_manager->get_component_id<T>());
 	entity.set_signature(signature);
 
-	system_manager->entity_signature_changed(entity.get_id(), signature);
+	system_manager->entity_signature_changed(entity_manager->get_entity(entity.get_id()), signature);
 
 	return component_ref;
 }
@@ -46,7 +51,7 @@ inline auto Scene::remove_component(Entity &entity) -> std::optional<T> {
 	signature.reset(component_manager->get_component_id<T>());
 	entity.set_signature(signature);
 
-	system_manager->entity_signature_changed(entity.get_id(), signature);
+	system_manager->entity_signature_changed(entity_manager->get_entity(entity.get_id()), signature);
 
 	return component;
 }

@@ -5,12 +5,20 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
+			"name": "Main",
+			"type": "lldb",
+			"request": "launch",
+			"program": "${workspaceRoot}/builddir/src/cege",
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
 			"name": "Unit tests",
 			"type": "lldb",
 			"request": "launch",
 			"program": "${workspaceRoot}/builddir/tests/cege_test",
 			"args": [],
-			"cwd": "${fileDirname}"
+			"cwd": "${workspaceFolder}"
 		}
 	]
 }

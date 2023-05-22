@@ -21,11 +21,11 @@ struct Bar {
 
 class FooSystem : public System {
    public:
-	auto sum(Scene &scene) -> int {
+	auto sum() -> int {
 		auto sum = 0;
 
-		for (auto entity : get_entities(scene)) {
-			auto &foo = entity.get_component<Foo>()->get();
+		for (auto entity : entities) {
+			auto &foo = entity->get_component_raw<Foo>();
 			sum += foo.x;
 		}
 
@@ -35,11 +35,11 @@ class FooSystem : public System {
 
 class BarSystem : public System {
    public:
-	auto sum(Scene &scene) -> int {
+	auto sum() -> int {
 		auto sum = 0;
 
-		for (auto entity : get_entities(scene)) {
-			auto &bar = entity.get_component<Bar>()->get();
+		for (auto entity : entities) {
+			auto &bar = entity->get_component_raw<Bar>();
 			sum += bar.x;
 		}
 
@@ -62,8 +62,8 @@ TEST_CASE("systems work") {
 	constexpr auto N_FOO_ENTITIES = 3;
 	constexpr auto N_BAR_ENTITIES = 2;
 
-	std::vector<Entity> foo_entities{};
-	std::vector<Entity> bar_entities{};
+	std::vector<std::shared_ptr<Entity>> foo_entities{};
+	std::vector<std::shared_ptr<Entity>> bar_entities{};
 
 	foo_entities.reserve(N_FOO_ENTITIES);
 	bar_entities.reserve(N_BAR_ENTITIES);
@@ -77,26 +77,18 @@ TEST_CASE("systems work") {
 	}
 
 	for (auto &entity : foo_entities) {
-		entity.create_component<Foo>();
+		entity->create_component<Foo>();
 	}
 
 	for (auto &entity : bar_entities) {
-		entity.create_component<Bar>();
+		entity->create_component<Bar>();
 	}
 
-	CHECK(foo_system.sum(scene) == 3);
-	CHECK(bar_system.sum(scene) == 4);
+	CHECK(foo_system.sum() == 3);
+	CHECK(bar_system.sum() == 4);
 
-	CHECK(foo_system.ids.size() == N_FOO_ENTITIES);
-	CHECK(bar_system.ids.size() == N_BAR_ENTITIES);
-
-	for (auto &entity : foo_entities) {
-		entity.destroy();
-	}
-
-	for (auto &entity : bar_entities) {
-		entity.destroy();
-	}
+	CHECK(foo_system.entities.size() == N_FOO_ENTITIES);
+	CHECK(bar_system.entities.size() == N_BAR_ENTITIES);
 }
 
 struct Baz {
@@ -107,9 +99,9 @@ class TwoSystem : public System {
    public:
 	auto product(Scene &scene) -> int {
 		auto product = 1;
-		for (auto &entity : get_entities(scene)) {
-			product *= entity.get_component<Foo>()->get().x;
-			product *= entity.get_component<Bar>()->get().x;
+		for (auto &entity : entities) {
+			product *= entity->get_component_raw<Foo>().x;
+			product *= entity->get_component_raw<Bar>().x;
 		}
 		return product;
 	}
@@ -119,10 +111,10 @@ class ThreeSystem : public System {
    public:
 	auto product(Scene &scene) -> int {
 		auto product = 1;
-		for (auto &entity : get_entities(scene)) {
-			product *= entity.get_component<Foo>()->get().x;
-			product *= entity.get_component<Bar>()->get().x;
-			product *= entity.get_component<Baz>()->get().x;
+		for (auto &entity : entities) {
+			product *= entity->get_component_raw<Foo>().x;
+			product *= entity->get_component_raw<Bar>().x;
+			product *= entity->get_component_raw<Baz>().x;
 		}
 		return product;
 	}
@@ -141,34 +133,34 @@ TEST_CASE("systems can look for multiple components") {
 	scene.set_system_signature<ThreeSystem>(three_signature);
 
 	auto entity1 = scene.create_entity();
-	entity1.create_component<Foo>();
+	entity1->create_component<Foo>();
 
 	auto entity2 = scene.create_entity();
-	entity2.create_component<Bar>();
+	entity2->create_component<Bar>();
 
 	auto entity3 = scene.create_entity();
-	entity3.create_component<Baz>();
+	entity3->create_component<Baz>();
 
 	auto entity4 = scene.create_entity();
-	entity4.create_component<Foo>();
-	entity4.create_component<Bar>();
+	entity4->create_component<Foo>();
+	entity4->create_component<Bar>();
 
 	auto entity5 = scene.create_entity();
-	entity5.create_component<Foo>();
-	entity5.create_component<Baz>();
+	entity5->create_component<Foo>();
+	entity5->create_component<Baz>();
 
 	auto entity6 = scene.create_entity();
-	entity6.create_component<Bar>();
-	entity6.create_component<Baz>();
+	entity6->create_component<Bar>();
+	entity6->create_component<Baz>();
 
 	auto entity7 = scene.create_entity();
-	entity7.create_component<Foo>();
-	entity7.create_component<Bar>();
-	entity7.create_component<Baz>();
+	entity7->create_component<Foo>();
+	entity7->create_component<Bar>();
+	entity7->create_component<Baz>();
 
 	CHECK(two_system.product(scene) == 4);
 	CHECK(three_system.product(scene) == 6);
 
-	CHECK(two_system.ids.size() == 2);
-	CHECK(three_system.ids.size() == 1);
+	CHECK(two_system.entities.size() == 2);
+	CHECK(three_system.entities.size() == 1);
 }

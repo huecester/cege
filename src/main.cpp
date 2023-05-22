@@ -7,9 +7,6 @@ constexpr auto WINDOW_TITLE = "Hello, SDL!";
 constexpr auto WINDOW_WIDTH = 640;
 constexpr auto WINDOW_HEIGHT = 480;
 
-constexpr auto WINDOW_FLAGS = SDL_WINDOW_SHOWN;
-constexpr auto RENDERER_FLAGS = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-
 constexpr WindowOptions WINDOW_OPTIONS{WINDOW_TITLE, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT};
 
 constexpr auto FIXED_TIMESTEP_MS = 1000 / 60;  // 60fps -> 1000 ms per 60 frames
@@ -81,13 +78,13 @@ struct Collider {
 
 class RenderSystem : public System {
    public:
-	auto render(Scene &scene, Window &window) -> void {
+	auto render(Window &window) -> void {
 		window.set_clear_color(0xaa, 0xaa, 0xaa);
 		window.clear();
 
-		for (auto &entity : get_entities(scene)) {
-			auto &texture = entity.get_component<Texture>()->get();
-			auto &transform = entity.get_component<Transform>()->get();
+		for (auto &entity : entities) {
+			auto &texture = entity->get_component_raw<Texture>();
+			auto &transform = entity->get_component_raw<Transform>();
 
 			SDL_Rect dstrect{
 				.x = static_cast<int>(transform.position.x),
@@ -105,10 +102,10 @@ class RenderSystem : public System {
 
 class PlayerSystem : public System {
    public:
-	auto move(Scene &scene, float delta) -> void {
-		for (auto &entity : get_entities(scene)) {
-			auto &transform = entity.get_component<Transform>()->get();
-			auto &player = entity.get_component<Player>()->get();
+	auto move(float delta) -> void {
+		for (auto &entity : entities) {
+			auto &transform = entity->get_component_raw<Transform>();
+			auto &player = entity->get_component_raw<Player>();
 
 			const auto keyboard_states = SDL_GetKeyboardState(nullptr);
 
@@ -126,10 +123,10 @@ class PlayerSystem : public System {
 
 class CollisionSystem : public System {
    public:
-	auto update(Scene &scene) {
-		for (auto &entity : get_entities(scene)) {
-			auto &transform = entity.get_component<Transform>()->get();
-			auto &collider = entity.get_component<Collider>()->get();
+	auto update() {
+		for (auto &entity : entities) {
+			auto &transform = entity->get_component_raw<Transform>();
+			auto &collider = entity->get_component_raw<Collider>();
 
 			auto left = transform.position.x;
 			auto right = transform.position.x + transform.scale.x;
@@ -152,11 +149,11 @@ class CollisionSystem : public System {
 			}
 
 			// Other entities
-			for (auto &other : get_entities(scene)) {
-				if (entity.get_id() == other.get_id()) continue;
+			for (auto &other : entities) {
+				if (entity->get_id() == other->get_id()) continue;
 
-				auto &other_transform = other.get_component<Transform>()->get();
-				auto &other_collider = other.get_component<Collider>()->get();
+				auto &other_transform = other->get_component_raw<Transform>();
+				auto &other_collider = other->get_component_raw<Collider>();
 				auto other_left = other_transform.position.x;
 				auto other_right = other_transform.position.x + other_transform.scale.x;
 				auto other_top = other_transform.position.y + other_transform.scale.y;
@@ -189,16 +186,16 @@ int main() {
 
 	// Entities
 	auto rick = scene.create_entity();
-	rick.create_component<Transform>();
-	rick.create_component<Texture>("assets/rick_astley.png", window.get_renderer());
-	rick.create_component<Player>();
-	rick.create_component<Collider>();
+	rick->create_component<Transform>();
+	rick->create_component<Texture>(window.load_image("assets/rick_astley.png"));
+	rick->create_component<Player>();
+	rick->create_component<Collider>();
 
 	auto ball = scene.create_entity();
-	auto &ball_transform = ball.create_component<Transform>();
+	auto &ball_transform = ball->create_component<Transform>();
 	ball_transform.position = {300.0f, 300.0f};
-	ball.create_component<Texture>("assets/ball.jpg", window.get_renderer());
-	ball.create_component<Collider>();
+	ball->create_component<Texture>(window.load_image("assets/ball.jpg"));
+	ball->create_component<Collider>();
 
 	SDL_Event e;
 	bool quit = false;
@@ -215,11 +212,9 @@ int main() {
 		auto now = SDL_GetTicks64();
 
 		// Fixed loop
-		auto delta_fixed = now - prev_fixed;
-		if (delta_fixed >= FIXED_TIMESTEP_MS) {
+		while (now - prev_fixed >= FIXED_TIMESTEP_MS) {
 			// Fixed update
-			// auto delta_fixed_s = delta_fixed / 1000.0f;
-			// fixed_update_system.update(delta_fixed_s);
+			// fixed_update_system.update();
 			prev_fixed += FIXED_TIMESTEP_MS;
 		}
 
@@ -228,10 +223,10 @@ int main() {
 		prev = now;
 		auto delta_s = delta / 1000.0f;
 		// update_system.update(delta_s);
-		player_system.move(scene, delta_s);
-		collision_system.update(scene);
+		player_system.move(delta_s);
+		collision_system.update();
 
 		// Render
-		render_system.render(scene, window);
+		render_system.render(window);
 	}
 }

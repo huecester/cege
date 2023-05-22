@@ -20,15 +20,7 @@ class Scene {
 	/// @brief Create an entity.
 	/// @return The entity.
 	/// @throw std::length_error Throws if too many entities are created.
-	auto create_entity() -> Entity;
-
-	/// @brief Create an entity from an ID.
-	///
-	/// This override is mainly used to create an entity from an ID that references an already existing entity without having to pass around references or pointers.
-	///
-	/// @return The entity.
-	/// @throw std::length_error Throws if too many entities are created.
-	auto create_entity(EntityId id) -> Entity;
+	auto create_entity() -> std::shared_ptr<Entity>;
 
 	/// @brief Destroy an entity.
 	/// @param entity The entity to be destroyed.
@@ -40,6 +32,14 @@ class Scene {
 	/// @return A reference to the component, or std::nullopt if the entity doesn't have this component.
 	template <typename T>
 	auto get_component(const Entity &entity) -> std::optional<std::reference_wrapper<T>>;
+
+	/// @brief Get an entity's component, throwing an exception if it doesn't exist.
+	/// @tparam T The component type to get.
+	/// @param entity The entity to get the component of.
+	/// @return A reference to the component.
+	/// @throw std::runtime_error Throws if the entity doesn't have this component.
+	template <typename T>
+	auto get_component_raw(const Entity &entity) -> T &;
 
 	/// @brief Create a component in place.
 	/// @tparam T The component type to create.

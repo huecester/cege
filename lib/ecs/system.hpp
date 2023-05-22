@@ -3,6 +3,7 @@
 #include <fmt/core.h>
 
 #include <functional>
+#include <memory>
 #include <set>
 #include <stdexcept>
 #include <string>
@@ -16,16 +17,12 @@ class Scene;
 /// @brief A class to store references to entities that a system cares about.
 ///
 /// Systems should inherit from this class and set their signature in the `SystemManager`.
-/// Signatures determine the types of entities that will be stored in the `entities` variable.
-/// Signatures store information on the components that an entity should have to be stored in this system.
+/// Signatures determine the entities that will be stored in the `entities` variable based on their components.
 class System {
    public:
-	std::set<EntityId> ids;
+	std::set<std::shared_ptr<Entity>> entities{};
 
 	virtual ~System() = default;
-
-   protected:
-	auto get_entities(Scene &scene) const -> std::vector<Entity>;
 };
 
 /// @brief A class to store and manage systems.
@@ -51,8 +48,8 @@ class SystemManager {
 	///
 	/// This method should be called by `Scene` when an entity is destroyed.
 	///
-	/// @param id The entity that was destroyed.
-	auto entity_destroyed(EntityId id) -> void;
+	/// @param entity A shared pointer to the entity that was destroyed.
+	auto entity_destroyed(std::shared_ptr<Entity> entity) -> void;
 
 	/// @internal
 	/// @brief Update all systems based on an entity's new signature.
@@ -60,9 +57,9 @@ class SystemManager {
 	/// This method should be called by `Scene` whenever an entity's signature changes.
 	/// An entity's signature changes whenever its components update, such as when calling `create_component()` or `remove_component()`.
 	///
-	/// @param id The entity ID that changed.
+	/// @param entity A shared pointer to the entity whose signature changed.
 	/// @param signature The new signature.
-	auto entity_signature_changed(EntityId id, Signature signature) -> void;
+	auto entity_signature_changed(std::shared_ptr<Entity> entity, Signature signature) -> void;
 
    private:
 	std::unordered_map<std::string, Signature> signatures{};

@@ -15,14 +15,19 @@ TEST_CASE("components work") {
 	auto scene = ctx.create_scene();
 	auto entity = scene.create_entity();
 
+	SUBCASE("get_component properly returns std::nullopt") {
+		auto component_opt = entity->get_component<TestVector>();
+		CHECK(!component_opt.has_value());
+	}
+
 	SUBCASE("components can be created") {
-		auto &component = entity.create_component<TestVector>(2, 5);
+		auto &component = entity->create_component<TestVector>(2, 5);
 
 		CHECK(component.x == 2);
 		CHECK(component.y == 5);
 
 		SUBCASE("components can be got") {
-			auto &get_component = entity.get_component<TestVector>()->get();
+			auto &get_component = entity->get_component_raw<TestVector>();
 
 			CHECK(get_component.x == 2);
 			CHECK(get_component.y == 5);
@@ -33,7 +38,7 @@ TEST_CASE("components work") {
 
 			CHECK(component.x == 3);
 
-			auto &get_component = entity.get_component<TestVector>()->get();
+			auto &get_component = entity->get_component_raw<TestVector>();
 
 			CHECK(get_component.x == 3);
 			get_component.x++;
@@ -45,15 +50,15 @@ TEST_CASE("components work") {
 
 	SUBCASE("components can be set") {
 		TestVector vector{2, 5};
-		auto &component = entity.set_component(std::move(vector));
+		auto &component = entity->set_component(std::move(vector));
 
 		CHECK(component.x == 2);
 		CHECK(component.y == 5);
 	}
 
 	SUBCASE("components can be removed") {
-		entity.create_component<TestVector>(2, 5);
-		auto component = *entity.remove_component<TestVector>();
+		entity->create_component<TestVector>(2, 5);
+		auto component = *entity->remove_component<TestVector>();
 
 		CHECK(component.x == 2);
 		CHECK(component.y == 5);

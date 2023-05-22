@@ -64,8 +64,13 @@ int main() {
   // Transform player_transform{50.0f, 75.0f};
   // player.set_component<Transform>(std::move(player_transform));
 
-  // Components can be retrieved using get_component<T>():
-  auto &transform = player.get_component<Transform>()->get(); // ->get() is used to acquire the reference inside the std::optional<T>
+  // Components can be retrieved using get_component_raw<T>():
+  auto &transform = player.get_component_raw<Transform>(); // Get a component, throwing an error if the entity doesn't have it
+
+  /*
+    // Alternatively, get_component can be used to return a std::optional without any exceptions.
+    auto &transform = player.get_component<Transform>()->get(); // ->get() is used to acquire the reference inside the std::optional<std::reference_wrapper<T>>
+  */
   std::cout << transform.position.x << "\n"; // 50
   transform.position.y += 50.0f;
 }
@@ -93,7 +98,7 @@ int main() {
 }
 ```
 
-The main feature of systems is signatures. Signatures represent a set of component types that a system cares about. Whenever a component is added to or removed from an entity, the scene will update all systems' internal `entities` member variable. `entities` is a list of entity IDs that contain at least all components that the system's signature has. Once a system's signature is set, `System::get_entities` can be used to get the entities that have the specified components:
+The main feature of systems is signatures. Signatures represent a set of component types that a system cares about. Whenever a component is added to or removed from an entity, the scene will update all systems' `entities` member variable. `entities` is a set of `std::shared_ptr<Entity>`s that have at least all components that the system's signature has:
 
 ```c++
 struct Foo {
@@ -106,11 +111,11 @@ struct Bar {
 
 class FooSystem : public System {
   public:
-    auto print(Scene &scene) -> void {
+    auto print() -> void {
       std::cout << "\nFooSystem:\n";
 
-      for (auto &entity : get_entities(scene)) {
-        auto &foo = entity.get_component<Foo>()->get();
+      for (auto &entity : entities) {
+        auto &foo = entity->get_component_raw<Foo>();
         std::cout << foo.name << "\n";
       }
     }
@@ -118,12 +123,12 @@ class FooSystem : public System {
 
 class FooBarSystem : public System {
   public:
-    auto sum(Scene &scene) -> void {
+    auto sum() -> void {
       std::cout << "\nFooBarSystem:\n";
 
-      for (auto &entity : get_entities(scene)) {
-        auto &foo = entity.get_component<Foo>()->get();
-        auto &bar = entity.get_component<Bar>()->get();
+      for (auto &entity : entities) {
+        auto &foo = entity->get_component_raw<Foo>();
+        auto &bar = entity->get_component_raw<Bar>();
 
         std::cout << foo.name << "\t" << bar.name << "\n";
       }
@@ -139,23 +144,23 @@ int main() {
 
   // Arguments to Entity::create_compnonent will be passed to the component's constructor.
   auto foo1 = scene.create_entity();
-  foo1.create_component<Foo>("foo1");
-  auto foo2 = scene.create_entity();
-  foo2.create_component<Foo>("foo2");
-  auto foo3 = scene.create_entity();
-  foo3.create_component<Foo>("foo3");
+  foo1->create_component<Foo>("foo1");
+  auto foo2 = scene->create_entity();
+  foo2->create_component<Foo>("foo2");
+  auto foo3 = scene->create_entity();
+  foo3->create_component<Foo>("foo3");
 
-  auto bar1 = scene.create_entity();
-  bar1.create_component<Bar>("bar1");
-  auto bar2 = scene.create_entity();
-  bar2.create_component<Bar>("bar2");
+  auto bar1 = scene->create_entity();
+  bar1->create_component<Bar>("bar1");
+  auto bar2 = scene->create_entity();
+  bar2->create_component<Bar>("bar2");
 
-  auto foo_bar1 = scene.create_entity();
-  foo_bar1.create_component<Foo>("Foo foo_bar1");
-  foo_bar1.create_component<Bar>("Bar foo_bar1");
-  auto foo_bar2 = scene.create_entity();
-  foo_bar2.create_component<Foo>("Foo foo_bar2");
-  foo_bar2.create_component<Bar>("Bar foo_bar2");
+  auto foo_bar1 = scene->create_entity();
+  foo_bar1->create_component<Foo>("Foo foo_bar1");
+  foo_bar1->create_component<Bar>("Bar foo_bar1");
+  auto foo_bar2 = scene->create_entity();
+  foo_bar2->create_component<Foo>("Foo foo_bar2");
+  foo_bar2->create_component<Bar>("Bar foo_bar2");
 
   // A system captures all entities that have all components of its signature, but they may have more.
   // For example, foo1-foo3 are captured, and so are foo_bar1 and foo_bar2, even though foo_bar1 and foo_bar2 have Bar components.
@@ -193,9 +198,9 @@ struct Transform {
 
 class MoveSystem : public System {
   public:
-    auto move(Scene &scene) -> void {
-      for (auto &entity : get_entities(scene)) {
-        auto &transform = entity.get_component<Transform>()->get();
+    auto move() -> void {
+      for (auto &entity : entities) {
+        auto &transform = entity->get_component<Transform>();
         transform.x = (transform.x + 10.0f);
         if (transform.x > WINDOW_WIDTH)
           transform.x = 0.0f;
@@ -205,12 +210,12 @@ class MoveSystem : public System {
 
 class RenderSystem : public System {
   public:
-    auto render(Scene &scene, Window &window) -> void {
+    auto render(Window &window) -> void {
       window.clear(); // Clear the back buffer
 
-      for (auto &entity : get_entities(scene)) {
-        auto &texture = entity.get_component<Texture>()->get();
-        auto &transform = entity.get_component<Transform>()->get();
+      for (auto &entity : entities) {
+        auto &texture = entity.get_component_raw<Texture>();
+        auto &transform = entity.get_component_raw<Transform>();
 
         // Define where to render the texture
         // In SDL, the origin is at the top left, so we have to do some math to emulate having the origin at the bottom left.
@@ -251,8 +256,8 @@ int main() {
 
   // Entities
   auto ball = scene.create_entity();
-  ball.create_component<Transform>();
-  ball.create_component<Texture>("assets/ball.jpg", window.get_renderer());
+  ball->create_component<Transform>();
+  ball->create_component<Texture>(window.load_image("assets/ball.jpg"));
 
   // Simple main loop
   SDL_Event e;

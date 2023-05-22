@@ -2,6 +2,7 @@
 
 #include <fmt/core.h>
 
+#include <stdexcept>
 #include <utility>
 
 #include "component.hpp"
@@ -64,6 +65,14 @@ inline auto ComponentArray<T>::entity_destroyed(EntityId id) -> void {
 template <typename T>
 inline auto ComponentManager::get_component(EntityId id) -> std::optional<std::reference_wrapper<T>> {
 	return get_component_array<T>().get_component(id);
+}
+
+template <typename T>
+inline auto ComponentManager::get_component_raw(EntityId id) -> T& {
+	auto component = get_component_array<T>().get_component(id);
+	if (!component)
+		throw std::runtime_error{fmt::format("Entity with ID `{}` does not have a `{}` component.", id, typeid(T).name())};
+	return *component;
 }
 
 template <typename T, typename... Args>
